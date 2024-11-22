@@ -57,7 +57,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /home/sebastiao/cgj/GLM/libraries/glm
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sebastiao/cgj/Lab1/build
+CMAKE_BINARY_DIR = /home/sebastiao/cgj/proj1/Lab1/build
 
 #=============================================================================
 # Directory level rules for the build root directory

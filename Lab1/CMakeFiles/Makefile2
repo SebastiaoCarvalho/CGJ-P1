@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sebastiao/cgj/Lab1
+CMAKE_SOURCE_DIR = /home/sebastiao/cgj/proj1/Lab1
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sebastiao/cgj/Lab1
+CMAKE_BINARY_DIR = /home/sebastiao/cgj/proj1/Lab1
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -81,14 +81,14 @@ clean: CMakeFiles/cgj.dir/clean
 CMakeFiles/cgj.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cgj.dir/build.make CMakeFiles/cgj.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cgj.dir/build.make CMakeFiles/cgj.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sebastiao/cgj/Lab1/CMakeFiles --progress-num=1,2 "Built target cgj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sebastiao/cgj/proj1/Lab1/CMakeFiles --progress-num=1,2 "Built target cgj"
 .PHONY : CMakeFiles/cgj.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/cgj.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sebastiao/cgj/Lab1/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sebastiao/cgj/proj1/Lab1/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cgj.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sebastiao/cgj/Lab1/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sebastiao/cgj/proj1/Lab1/CMakeFiles 0
 .PHONY : CMakeFiles/cgj.dir/rule
 
 # Convenience name for target.

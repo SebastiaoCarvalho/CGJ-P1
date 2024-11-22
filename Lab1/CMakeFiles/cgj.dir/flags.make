@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/sebastiao/cgj/Lab1/libraries
+CXX_INCLUDES = -I/home/sebastiao/cgj/proj1/Lab1/libraries
 
 CXX_FLAGS = 
 
