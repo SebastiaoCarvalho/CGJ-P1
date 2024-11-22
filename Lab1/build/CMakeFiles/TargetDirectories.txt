@@ -1,0 +1,2 @@
+/home/sebastiao/cgj/Lab1/build/CMakeFiles/edit_cache.dir
+/home/sebastiao/cgj/Lab1/build/CMakeFiles/rebuild_cache.dir
