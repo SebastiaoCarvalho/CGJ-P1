@@ -8,7 +8,10 @@ Makefile
 
 # build
 *.a
-Lab1/build
+build
 lab1
+
+# delivery
+*.zip
 
 
