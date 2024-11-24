@@ -1,3 +1,14 @@
-Lab1/CMakeFiles/
+.vscode/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# build
+*.a
 Lab1/build
-./cgj
+lab1
+
+
