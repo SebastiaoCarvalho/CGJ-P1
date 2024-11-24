@@ -12,7 +12,8 @@ glm::mat3 dualMatrix(glm::vec3 a) {
 void ex4() {
     print_header("Exercise 4");
     glm::vec3 v = glm::vec3(1.0f,1.0f,1.0f); // input
-    glm::vec3 out = glm::vec3(1.0f,-1.0f,1.0f); // input
+    glm::vec3 expectedV = glm::vec3(1.0f,-1.0f,1.0f); // input
+    std::cout << "initial v: " << glm::to_string(v) << std::endl;
 
     glm::vec3 ax = glm::vec3(1.0f,0,0);
     glm::vec3 ay = glm::vec3(0,1.0f,0);
@@ -20,12 +21,20 @@ void ex4() {
     glm::mat3 Rx = rodriguesRotation(dualMatrix(ax), 90.0f);
     glm::mat3 Ry = rodriguesRotation(dualMatrix(ay), 90.0f);
     glm::mat3 Rz = rodriguesRotation(dualMatrix(az), 90.0f);
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++) {
         v = Rx * v;
-    for (int i = 0; i < 3; i++)
+        std::cout << "v after " << i+1 << " rotations of 90 degrees on x: " << glm::to_string(v) << std::endl;
+    }
+    for (int i = 0; i < 3; i++) {
         v = Ry * v;
-    for (int i = 0; i < 3; i++)
+        std::cout << "v after " << i+1 << " rotations of 90 degrees on y: " << glm::to_string(v) << std::endl;
+    }
+    for (int i = 0; i < 3; i++) {
         v = Rz * v;
-
-    assert(glm::all(glm::epsilonEqual(v,out,THRESHOLD)));
+        std::cout << "v after " << i+1 << " rotations of 90 degrees on z: " << glm::to_string(v) << std::endl;
+    }
+    std::cout << "expected v: " << glm::to_string(expectedV) << std::endl;
+    std::cout << "final v == expected v: " << vectorEquality(v, expectedV) << std::endl;
+    assert(vectorEquality(v, expectedV));
+    print_header("Exercise 4 completed");
 }
