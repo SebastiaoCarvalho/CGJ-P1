@@ -17,7 +17,7 @@ glm::mat3 randomMat3();
 
 bool vectorEquality(glm::vec3 v1, glm::vec3 v2);
 
-bool matrixEquality(glm::mat4 m1, glm::mat4 m2);
+bool matrixEquality(glm::mat3 m1, glm::mat3 m2);
 
 void print_header(const std::string& text);
 

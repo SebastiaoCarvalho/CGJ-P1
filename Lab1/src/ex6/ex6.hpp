@@ -10,7 +10,7 @@
 #include "glm/gtx/string_cast.hpp"
 #include "../utils/utils.hpp"
 
-bool inverseProperty(glm::mat4 m1, glm::mat4 m2);
+bool inverseProperty(glm::mat3 m1, glm::mat3 m2);
 
 void ex6();
 

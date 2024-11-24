@@ -10,7 +10,7 @@
 #include "glm/gtx/string_cast.hpp"
 #include "../utils/utils.hpp"
 
-bool transpose_property(glm::mat4 m1, glm::mat4 m2);
+bool transpose_property(glm::mat3 m1, glm::mat3 m2);
 
 void ex5();
 

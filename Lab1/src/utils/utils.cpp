@@ -24,9 +24,9 @@ bool vectorEquality(glm::vec3 v1, glm::vec3 v2) {
     return glm::all(glm::epsilonEqual(v1, v2, THRESHOLD));
 }
 
-bool matrixEquality(glm::mat4 m1, glm::mat4 m2) {
-	for (int i = 0; i < 4; i++)
-		for (int j = 0; j < 4; j++)
+bool matrixEquality(glm::mat3 m1, glm::mat3 m2) {
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
 			if (! glm::epsilonEqual(m1[i][j], m2[i][j], THRESHOLD))
 				return false;
 	return true;
