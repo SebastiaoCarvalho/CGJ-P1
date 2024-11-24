@@ -3,8 +3,9 @@
 ## Build
 
 ```bash
+mkdir build
 cd build
-cmake CmakeLists.txt
+cmake ../
 make
 ```
 
