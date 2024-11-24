@@ -3,7 +3,7 @@
 #include "ex3/ex3.hpp"
 #include "ex4/ex4.hpp"
 #include "ex5/ex5.hpp"
-//#include "ex6/ex6.hpp"
+#include "ex6/ex6.hpp"
 
 int main() {
 	ex1();
@@ -11,6 +11,7 @@ int main() {
 	ex3();
 	ex4();
 	ex5();
+	ex6();
 	std::cout << "All exercises successful" << std::endl;
 	return 0;
 }

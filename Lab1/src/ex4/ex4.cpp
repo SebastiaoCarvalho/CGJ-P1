@@ -19,8 +19,12 @@ void ex4() {
     glm::vec3 ay = glm::vec3(0,1.0f,0);
     glm::vec3 az = glm::vec3(0,0,1.0f);
     glm::mat3 Rx = rodriguesRotation(dualMatrix(ax), 90.0f);
+    std::cout << "Rodrigues rotation matrix for 90 degrees on x: " << glm::to_string(Rx) << std::endl;
     glm::mat3 Ry = rodriguesRotation(dualMatrix(ay), 90.0f);
+    std::cout << "Rodrigues rotation matrix for 90 degrees on y: " << glm::to_string(Ry) << std::endl;
     glm::mat3 Rz = rodriguesRotation(dualMatrix(az), 90.0f);
+    std::cout << "Rodrigues rotation matrix for 90 degrees on z: " << glm::to_string(Rz) << std::endl;
+
     for (int i = 0; i < 3; i++) {
         v = Rx * v;
         std::cout << "v after " << i+1 << " rotations of 90 degrees on x: " << glm::to_string(v) << std::endl;

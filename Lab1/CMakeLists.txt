@@ -10,8 +10,8 @@ add_subdirectory(src/ex2)
 add_subdirectory(src/ex3)
 add_subdirectory(src/ex4)
 add_subdirectory(src/ex5)
-#add_subdirectory(src/ex6)
+add_subdirectory(src/ex6)
 
 add_executable(lab1 src/main.cpp)
 
-target_link_libraries(lab1 ex1 ex2 ex3 ex4 ex5)
+target_link_libraries(lab1 ex1 ex2 ex3 ex4 ex5 ex6)
