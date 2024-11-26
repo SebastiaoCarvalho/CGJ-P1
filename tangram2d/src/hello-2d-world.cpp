@@ -63,8 +63,8 @@ typedef struct {
 
 const Vertex Vertices[] = {
     {{0.25f, 0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.75f, 0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.50f, 0.75f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}};
+    {{0.75f, 0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+    {{0.25f, 0.75f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}};
 
 const GLubyte Indices[] = {0, 1, 2};
 
@@ -117,10 +117,6 @@ void MyApp::drawScene() {
   Shaders->bind();
 
   glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(I));
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE,
-                 reinterpret_cast<GLvoid *>(0));
-
-  glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(M));
   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE,
                  reinterpret_cast<GLvoid *>(0));
 
