@@ -17,6 +17,103 @@
 
 #include "../mgl/mgl.hpp"
 
+
+//////////////////////////////////////////////////////////////////// VAOs & VBOs
+
+typedef struct {
+  GLfloat XYZW[4];
+  GLfloat RGBA[4];
+} Vertex;
+
+
+// Triangle 
+
+const Vertex TriangleVertices[] = {
+    {{0.0f, 0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+    {{0.5f, 0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+    {{0.0f, 0.5f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
+};
+
+const GLubyte TriangleIndices[] = {0, 1, 2};
+
+// Square
+
+const Vertex SquareVertices[] {
+    {{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+    {{0.5f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+    {{0.0f, 0.5f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+    {{0.5f, 0.5f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}
+};
+
+
+const GLubyte SquareIndices[] = {
+  0, 1, 2, 
+  1, 3, 2
+};
+
+const GLuint POSITION = 0, COLOR = 1;
+
+//////////////////////////////////////////////////////////////////// TANGRAM OBJECTS
+class TangramObject {
+  public:
+    GLuint VaoId, VboId[2];
+    GLsizei NumberOfIndices;
+    TangramObject(const Vertex Vertices[], size_t SizeOfVertices, const GLubyte Indices[], size_t SizeOfIndices);
+    void destroyBufferObject();
+    void draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm::mat4 transformation);
+};
+
+TangramObject::TangramObject(const Vertex Vertices[], size_t SizeOfVertices, const GLubyte Indices[], size_t SizeOfIndices) {
+  glGenVertexArrays(1, &VaoId);
+  glBindVertexArray(VaoId);
+  {
+    glGenBuffers(2, VboId);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VboId[0]);
+    {
+      glBufferData(GL_ARRAY_BUFFER,  SizeOfVertices , Vertices, GL_STATIC_DRAW);
+      glEnableVertexAttribArray(POSITION);
+      glVertexAttribPointer(POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                            reinterpret_cast<GLvoid *>(0));
+      glEnableVertexAttribArray(COLOR);
+      glVertexAttribPointer(
+          COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+          reinterpret_cast<GLvoid *>(sizeof(Vertices[0].XYZW)));
+    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VboId[1]);
+    {
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, SizeOfIndices, Indices,
+                   GL_STATIC_DRAW);
+    }
+  }
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  glDeleteBuffers(2, VboId);
+
+  NumberOfIndices = SizeOfIndices / sizeof(GLubyte);
+}
+
+void TangramObject::destroyBufferObject() {
+  glBindVertexArray(VaoId);
+  glDisableVertexAttribArray(POSITION);
+  glDisableVertexAttribArray(COLOR);
+  glDeleteVertexArrays(1, &VaoId);
+  glBindVertexArray(0);
+}
+
+void TangramObject::draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm::mat4 transformation) {
+
+  glBindVertexArray(VaoId);
+  Shaders->bind();
+
+  glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(transformation));
+  glDrawElements(GL_TRIANGLES, NumberOfIndices, GL_UNSIGNED_BYTE,
+                 reinterpret_cast<GLvoid *>(0));
+  Shaders->unbind();
+  glBindVertexArray(0);
+}
+
 ////////////////////////////////////////////////////////////////////////// MYAPP
 
 class MyApp : public mgl::App {
@@ -27,10 +124,11 @@ class MyApp : public mgl::App {
   void windowSizeCallback(GLFWwindow *win, int width, int height) override;
 
  private:
-  const GLuint POSITION = 0, COLOR = 1;
-  GLuint VaoId, VboId[2];
   std::unique_ptr<mgl::ShaderProgram> Shaders;
   GLint MatrixId;
+  TangramObject * TriangleObject;
+  TangramObject * SquareObject;
+  TangramObject * ParallelogramObject;
 
   void createShaderProgram();
   void createBufferObjects();
@@ -54,74 +152,25 @@ void MyApp::createShaderProgram() {
   MatrixId = Shaders->Uniforms["Matrix"].index;
 }
 
-//////////////////////////////////////////////////////////////////// VAOs & VBOs
-
-typedef struct {
-  GLfloat XYZW[4];
-  GLfloat RGBA[4];
-} Vertex;
-
-const Vertex Vertices[] = {
-    {{0.25f, 0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.75f, 0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.25f, 0.75f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}};
-
-const GLubyte Indices[] = {0, 1, 2};
-
 void MyApp::createBufferObjects() {
-  glGenVertexArrays(1, &VaoId);
-  glBindVertexArray(VaoId);
-  {
-    glGenBuffers(2, VboId);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VboId[0]);
-    {
-      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-      glEnableVertexAttribArray(POSITION);
-      glVertexAttribPointer(POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                            reinterpret_cast<GLvoid *>(0));
-      glEnableVertexAttribArray(COLOR);
-      glVertexAttribPointer(
-          COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-          reinterpret_cast<GLvoid *>(sizeof(Vertices[0].XYZW)));
-    }
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VboId[1]);
-    {
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices,
-                   GL_STATIC_DRAW);
-    }
-  }
-  glBindVertexArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glDeleteBuffers(2, VboId);
+  TriangleObject = new TangramObject(TriangleVertices, sizeof(TriangleVertices), TriangleIndices, sizeof(TriangleIndices));
+  SquareObject = new TangramObject(SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices));
 }
 
 void MyApp::destroyBufferObjects() {
-  glBindVertexArray(VaoId);
-  glDisableVertexAttribArray(POSITION);
-  glDisableVertexAttribArray(COLOR);
-  glDeleteVertexArrays(1, &VaoId);
-  glBindVertexArray(0);
+  TriangleObject->destroyBufferObject();
+  delete TriangleObject;
 }
 
 ////////////////////////////////////////////////////////////////////////// SCENE
 
 const glm::mat4 I(1.0f);
-const glm::mat4 M = glm::translate(glm::vec3(-1.0f, -1.0f, 0.0f));
+const glm::mat4 M = glm::translate(glm::vec3(-0.5f, -0.5f, 0.0f));
 
 void MyApp::drawScene() {
   // Drawing directly in clip space
-
-  glBindVertexArray(VaoId);
-  Shaders->bind();
-
-  glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(I));
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE,
-                 reinterpret_cast<GLvoid *>(0));
-
-  Shaders->unbind();
-  glBindVertexArray(0);
+  TriangleObject->draw(Shaders.get(), MatrixId, I);
+  SquareObject->draw(Shaders.get(), MatrixId, M);
 }
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
