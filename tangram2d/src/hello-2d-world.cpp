@@ -51,6 +51,20 @@ const GLubyte SquareIndices[] = {
   1, 3, 2
 };
 
+// Paralelogram
+
+const Vertex ParalelogramVertices[] = {
+  {{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+  {{0.5f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+  {{0.5f, 0.5f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+  {{1.0f, 0.5f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
+};
+
+const GLubyte ParalelogramIndices[] = {
+  0, 1, 2,
+  1, 3, 2
+};
+
 const GLuint POSITION = 0, COLOR = 1;
 
 //////////////////////////////////////////////////////////////////// TANGRAM OBJECTS
@@ -155,6 +169,7 @@ void MyApp::createShaderProgram() {
 void MyApp::createBufferObjects() {
   TriangleObject = new TangramObject(TriangleVertices, sizeof(TriangleVertices), TriangleIndices, sizeof(TriangleIndices));
   SquareObject = new TangramObject(SquareVertices, sizeof(SquareVertices), SquareIndices, sizeof(SquareIndices));
+  ParallelogramObject = new TangramObject(ParalelogramVertices, sizeof(ParalelogramVertices), ParalelogramIndices, sizeof(ParalelogramIndices));
 }
 
 void MyApp::destroyBufferObjects() {
@@ -171,6 +186,7 @@ void MyApp::drawScene() {
   // Drawing directly in clip space
   TriangleObject->draw(Shaders.get(), MatrixId, I);
   SquareObject->draw(Shaders.get(), MatrixId, M);
+  ParallelogramObject->draw(Shaders.get(), MatrixId, I);
 }
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
@@ -194,7 +210,7 @@ int main(int argc, char *argv[]) {
   mgl::Engine &engine = mgl::Engine::getInstance();
   engine.setApp(new MyApp());
   engine.setOpenGL(4, 6);
-  engine.setWindow(600, 600, "Hello Modern 2D World", 0, 1);
+  engine.setWindow(600, 600, "Tangram 2D", 0, 1);
   engine.init();
   engine.run();
   exit(EXIT_SUCCESS);
