@@ -194,14 +194,14 @@ const glm::mat4 M = glm::translate(glm::vec3(-0.5f, -0.5f, 0.0f));
 
 void MyApp::drawSmallTriangle1() {
   glm::mat4 rotation = glm::rotate(glm::radians(-135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(0.5, 0.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(glm::sqrt(0.5) / 2, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
   TriangleObject->draw(Shaders.get(), MatrixId, transformation);
 }
 
 void MyApp::drawSmallTriangle2() {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(-0.5, 0.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(glm::sqrt(0.5) / 2, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
   TriangleObject->draw(Shaders.get(), MatrixId, transformation);
 }
@@ -220,7 +220,7 @@ void MyApp::drawLargeTriangle2() {
 
 void MyApp::drawSquare() {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(-0.5f, 0.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(- glm::sqrt(0.5) / 2, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
   SquareObject->draw(Shaders.get(), MatrixId, transformation);
 }
@@ -233,11 +233,11 @@ void MyApp::drawScene() {
   // Draw Tangram Pieces in clip space
   drawSmallTriangle1();
   drawSmallTriangle2();
-  drawMediumTriangle();
-  drawLargeTriangle1();
-  drawLargeTriangle2();
+  //drawMediumTriangle();
+  //drawLargeTriangle1();
+  //drawLargeTriangle2();
   drawSquare();
-  drawParallelogram();
+  //drawParallelogram();
 }
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
