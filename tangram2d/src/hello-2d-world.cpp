@@ -191,17 +191,18 @@ void MyApp::destroyBufferObjects() {
 
 const glm::mat4 I(1.0f);
 const glm::mat4 M = glm::translate(glm::vec3(-0.5f, -0.5f, 0.0f));
+const float horizontalOffset = glm::sqrt(0.5) / 2;
 
 void MyApp::drawSmallTriangle1() {
   glm::mat4 rotation = glm::rotate(glm::radians(-135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(glm::sqrt(0.5) / 2, 0.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
   TriangleObject->draw(Shaders.get(), MatrixId, transformation);
 }
 
 void MyApp::drawSmallTriangle2() {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(glm::sqrt(0.5) / 2, 0.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
   TriangleObject->draw(Shaders.get(), MatrixId, transformation);
 }
@@ -211,16 +212,24 @@ void MyApp::drawMediumTriangle() {
 }
 
 void MyApp::drawLargeTriangle1() {
-  TriangleObject->draw(Shaders.get(), MatrixId, I);
+  glm::mat4 rotation = glm::rotate(glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 1.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(0.5, 0.5f, 0.0f));
+  glm::mat4 transformation =  translation * rotation * scale;
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
 }
 
 void MyApp::drawLargeTriangle2() {
-  TriangleObject->draw(Shaders.get(), MatrixId, I);
+  glm::mat4 rotation = glm::rotate(glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 1.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(-0.5, 0.5f, 0.0f));
+  glm::mat4 transformation =  translation * rotation * scale;
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
 }
 
 void MyApp::drawSquare() {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(- glm::sqrt(0.5) / 2, 0.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(- horizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
   SquareObject->draw(Shaders.get(), MatrixId, transformation);
 }
@@ -234,8 +243,8 @@ void MyApp::drawScene() {
   drawSmallTriangle1();
   drawSmallTriangle2();
   //drawMediumTriangle();
-  //drawLargeTriangle1();
-  //drawLargeTriangle2();
+  drawLargeTriangle1();
+  drawLargeTriangle2();
   drawSquare();
   //drawParallelogram();
 }
