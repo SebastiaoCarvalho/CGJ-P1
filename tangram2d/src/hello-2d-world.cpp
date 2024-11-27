@@ -55,10 +55,10 @@ const GLubyte SquareIndices[] = {
 // Paralelogram
 
 const Vertex ParalelogramVertices[] = {
-  {{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-  {{0.5f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-  {{0.5f, 0.5f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-  {{1.0f, 0.5f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
+  {{-0.5f, -0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+  {{0.0f, -0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+  {{0.0f, 0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+  {{0.5f, 0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
 };
 
 const GLubyte ParalelogramIndices[] = {
@@ -192,6 +192,7 @@ void MyApp::destroyBufferObjects() {
 const glm::mat4 I(1.0f);
 const glm::mat4 M = glm::translate(glm::vec3(-0.5f, -0.5f, 0.0f));
 const float horizontalOffset = glm::sqrt(0.5) / 2;
+const float downVerticalOffset = 0.25f;
 
 void MyApp::drawSmallTriangle1() {
   glm::mat4 rotation = glm::rotate(glm::radians(-135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -208,7 +209,11 @@ void MyApp::drawSmallTriangle2() {
 }
 
 void MyApp::drawMediumTriangle() {
-  TriangleObject->draw(Shaders.get(), MatrixId, I);
+  glm::mat4 rotation = glm::rotate(glm::radians(-135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 scale = glm::scale(glm::vec3(glm::sqrt(2), glm::sqrt(2), 1.0));
+  glm::mat4 translation = glm::translate(glm::vec3(0.25f, downVerticalOffset - 1.0f, 0.0f));
+  glm::mat4 transformation = translation * rotation * scale;
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
 }
 
 void MyApp::drawLargeTriangle1() {
@@ -235,18 +240,19 @@ void MyApp::drawSquare() {
 }
 
 void MyApp::drawParallelogram() {
-  ParallelogramObject->draw(Shaders.get(), MatrixId, I);
+  glm::mat4 translation = glm::translate(glm::vec3(-0.25f, downVerticalOffset -0.75f, 0.0f));
+  ParallelogramObject->draw(Shaders.get(), MatrixId, translation);
 }
 
 void MyApp::drawScene() {
   // Draw Tangram Pieces in clip space
   drawSmallTriangle1();
   drawSmallTriangle2();
-  //drawMediumTriangle();
+  drawMediumTriangle();
   drawLargeTriangle1();
   drawLargeTriangle2();
   drawSquare();
-  //drawParallelogram();
+  drawParallelogram();
 }
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
