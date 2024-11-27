@@ -14,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
 #include <memory>
+#include <iostream>
 
 #include "../mgl/mgl.hpp"
 
@@ -29,9 +30,9 @@ typedef struct {
 // Triangle 
 
 const Vertex TriangleVertices[] = {
-    {{0.0f, 0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.0f, 0.5f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
+    {{-0.25f, -0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+    {{0.25f, -0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+    {{-0.25f, 0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
 };
 
 const GLubyte TriangleIndices[] = {0, 1, 2};
@@ -39,10 +40,10 @@ const GLubyte TriangleIndices[] = {0, 1, 2};
 // Square
 
 const Vertex SquareVertices[] {
-    {{0.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.0f, 0.5f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.5f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}
+    {{-0.25f, -0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+    {{0.25f, -0.250f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+    {{-0.25f, 0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+    {{0.25f, 0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}
 };
 
 
@@ -124,6 +125,7 @@ void TangramObject::draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm
   glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(transformation));
   glDrawElements(GL_TRIANGLES, NumberOfIndices, GL_UNSIGNED_BYTE,
                  reinterpret_cast<GLvoid *>(0));
+  
   Shaders->unbind();
   glBindVertexArray(0);
 }
@@ -139,7 +141,7 @@ class MyApp : public mgl::App {
 
  private:
   std::unique_ptr<mgl::ShaderProgram> Shaders;
-  GLint MatrixId;
+  GLint MatrixId; 
   TangramObject * TriangleObject;
   TangramObject * SquareObject;
   TangramObject * ParallelogramObject;
@@ -148,6 +150,14 @@ class MyApp : public mgl::App {
   void createBufferObjects();
   void destroyBufferObjects();
   void drawScene();
+
+  void drawSmallTriangle1();
+  void drawSmallTriangle2();
+  void drawMediumTriangle();
+  void drawLargeTriangle1();
+  void drawLargeTriangle2();
+  void drawSquare();
+  void drawParallelogram();
 };
 
 //////////////////////////////////////////////////////////////////////// SHADERs
@@ -182,11 +192,52 @@ void MyApp::destroyBufferObjects() {
 const glm::mat4 I(1.0f);
 const glm::mat4 M = glm::translate(glm::vec3(-0.5f, -0.5f, 0.0f));
 
-void MyApp::drawScene() {
-  // Drawing directly in clip space
+void MyApp::drawSmallTriangle1() {
+  glm::mat4 rotation = glm::rotate(glm::radians(-135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(0.5, 0.0f, 0.0f));
+  glm::mat4 transformation = translation * rotation;
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
+}
+
+void MyApp::drawSmallTriangle2() {
+  glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(-0.5, 0.0f, 0.0f));
+  glm::mat4 transformation = translation * rotation;
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
+}
+
+void MyApp::drawMediumTriangle() {
   TriangleObject->draw(Shaders.get(), MatrixId, I);
-  SquareObject->draw(Shaders.get(), MatrixId, M);
+}
+
+void MyApp::drawLargeTriangle1() {
+  TriangleObject->draw(Shaders.get(), MatrixId, I);
+}
+
+void MyApp::drawLargeTriangle2() {
+  TriangleObject->draw(Shaders.get(), MatrixId, I);
+}
+
+void MyApp::drawSquare() {
+  glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(-0.5f, 0.0f, 0.0f));
+  glm::mat4 transformation = translation * rotation;
+  SquareObject->draw(Shaders.get(), MatrixId, transformation);
+}
+
+void MyApp::drawParallelogram() {
   ParallelogramObject->draw(Shaders.get(), MatrixId, I);
+}
+
+void MyApp::drawScene() {
+  // Draw Tangram Pieces in clip space
+  drawSmallTriangle1();
+  drawSmallTriangle2();
+  drawMediumTriangle();
+  drawLargeTriangle1();
+  drawLargeTriangle2();
+  drawSquare();
+  drawParallelogram();
 }
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
