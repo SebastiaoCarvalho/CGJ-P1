@@ -19,13 +19,16 @@
 #include "../mgl/mgl.hpp"
 
 
-//////////////////////////////////////////////////////////////////// VAOs & VBOs
+//////////////////////////////////////////////////////////////////// structs and constants
 
 typedef struct {
   GLfloat XYZW[4];
   GLfloat RGBA[4];
 } Vertex;
 
+typedef struct {
+  glm::vec4 value;
+} Color;
 
 // Triangle 
 
@@ -66,6 +69,15 @@ const GLubyte ParalelogramIndices[] = {
   1, 3, 2
 };
 
+const Color RED = {{1.0f, 0.0f, 0.0f, 1.0f}};
+const Color GREEN = {{0.0f, 1.0f, 0.0f, 1.0f}};
+const Color BLUE = {{0.0f, 0.0f, 1.0f, 1.0f}};
+const Color YELLOW = {{1.0f, 1.0f, 0.0f, 1.0f}};
+const Color CYAN = {{0.0f, 1.0f, 1.0f, 1.0f}};
+const Color MAGENTA = {{1.0f, 0.0f, 1.0f, 1.0f}};
+const Color ORANGE = {{1.0f, 0.5f, 0.0f, 1.0f}};
+
+
 const GLuint POSITION = 0, COLOR = 1;
 
 //////////////////////////////////////////////////////////////////// TANGRAM OBJECTS
@@ -75,7 +87,7 @@ class TangramObject {
     GLsizei NumberOfIndices;
     TangramObject(const Vertex Vertices[], size_t SizeOfVertices, const GLubyte Indices[], size_t SizeOfIndices);
     void destroyBufferObject();
-    void draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm::mat4 transformation);
+    void draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm::mat4 transformation, const Color color, GLint ColorId);
 };
 
 TangramObject::TangramObject(const Vertex Vertices[], size_t SizeOfVertices, const GLubyte Indices[], size_t SizeOfIndices) {
@@ -117,12 +129,12 @@ void TangramObject::destroyBufferObject() {
   glBindVertexArray(0);
 }
 
-void TangramObject::draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm::mat4 transformation) {
-
+void TangramObject::draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm::mat4 transformation, const Color color, GLint ColorId) {
   glBindVertexArray(VaoId);
   Shaders->bind();
 
   glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(transformation));
+  glUniform4f(ColorId, color.value.x, color.value.y, color.value.z, color.value.w);
   glDrawElements(GL_TRIANGLES, NumberOfIndices, GL_UNSIGNED_BYTE,
                  reinterpret_cast<GLvoid *>(0));
   
@@ -142,6 +154,7 @@ class MyApp : public mgl::App {
  private:
   std::unique_ptr<mgl::ShaderProgram> Shaders;
   GLint MatrixId; 
+  GLint ColorId;
   TangramObject * TriangleObject;
   TangramObject * SquareObject;
   TangramObject * ParallelogramObject;
@@ -170,10 +183,11 @@ void MyApp::createShaderProgram() {
   Shaders->addAttribute(mgl::POSITION_ATTRIBUTE, POSITION);
   Shaders->addAttribute(mgl::COLOR_ATTRIBUTE, COLOR);
   Shaders->addUniform("Matrix");
-
+  Shaders->addUniform("Color");
   Shaders->create();
 
   MatrixId = Shaders->Uniforms["Matrix"].index;
+  ColorId = Shaders->Uniforms["Color"].index;
 }
 
 void MyApp::createBufferObjects() {
@@ -198,14 +212,14 @@ void MyApp::drawSmallTriangle1() {
   glm::mat4 rotation = glm::rotate(glm::radians(-135.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
-  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation, RED, ColorId);
 }
 
 void MyApp::drawSmallTriangle2() {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
-  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation, ORANGE, ColorId);
 }
 
 void MyApp::drawMediumTriangle() {
@@ -213,7 +227,7 @@ void MyApp::drawMediumTriangle() {
   glm::mat4 scale = glm::scale(glm::vec3(glm::sqrt(2), glm::sqrt(2), 1.0));
   glm::mat4 translation = glm::translate(glm::vec3(0.25f, downVerticalOffset - 1.0f, 0.0f));
   glm::mat4 transformation = translation * rotation * scale;
-  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation, MAGENTA, ColorId);
 }
 
 void MyApp::drawLargeTriangle1() {
@@ -221,7 +235,7 @@ void MyApp::drawLargeTriangle1() {
   glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 1.0f));
   glm::mat4 translation = glm::translate(glm::vec3(0.5, 0.5f, 0.0f));
   glm::mat4 transformation =  translation * rotation * scale;
-  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation, GREEN, ColorId);
 }
 
 void MyApp::drawLargeTriangle2() {
@@ -229,19 +243,19 @@ void MyApp::drawLargeTriangle2() {
   glm::mat4 scale = glm::scale(glm::vec3(2.0f, 2.0f, 1.0f));
   glm::mat4 translation = glm::translate(glm::vec3(-0.5, 0.5f, 0.0f));
   glm::mat4 transformation =  translation * rotation * scale;
-  TriangleObject->draw(Shaders.get(), MatrixId, transformation);
+  TriangleObject->draw(Shaders.get(), MatrixId, transformation, BLUE, ColorId);
 }
 
 void MyApp::drawSquare() {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glm::mat4 translation = glm::translate(glm::vec3(- horizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation;
-  SquareObject->draw(Shaders.get(), MatrixId, transformation);
+  SquareObject->draw(Shaders.get(), MatrixId, transformation, YELLOW, ColorId);
 }
 
 void MyApp::drawParallelogram() {
   glm::mat4 translation = glm::translate(glm::vec3(-0.25f, downVerticalOffset -0.75f, 0.0f));
-  ParallelogramObject->draw(Shaders.get(), MatrixId, translation);
+  ParallelogramObject->draw(Shaders.get(), MatrixId, translation, CYAN, ColorId);
 }
 
 void MyApp::drawScene() {
