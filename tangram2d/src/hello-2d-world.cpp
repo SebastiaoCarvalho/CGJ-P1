@@ -203,8 +203,6 @@ void MyApp::destroyBufferObjects() {
 
 ////////////////////////////////////////////////////////////////////////// SCENE
 
-const glm::mat4 I(1.0f);
-const glm::mat4 M = glm::translate(glm::vec3(-0.5f, -0.5f, 0.0f));
 const float horizontalOffset = glm::sqrt(0.5) / 2;
 const float downVerticalOffset = 0.25f;
 
