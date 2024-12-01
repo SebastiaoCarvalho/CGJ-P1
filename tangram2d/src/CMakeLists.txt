@@ -2,10 +2,10 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Create the executable
-project(hello-2d-world LANGUAGES CXX)
+project(tangram2d LANGUAGES CXX)
 
 # Source files
-set(SRC_SOURCES hello-2d-world.cpp)
+set(SRC_SOURCES tangram2d.cpp)
 
 # GLSL shader files
 set(SHADER_FILES clip-fs.glsl clip-vs.glsl)

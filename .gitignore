@@ -11,7 +11,8 @@ cmake_install.cmake
 *.so
 build
 lab1
-hello-2d-world
+tangram2d/src/tangram2d
+
 
 # delivery
 *.zip

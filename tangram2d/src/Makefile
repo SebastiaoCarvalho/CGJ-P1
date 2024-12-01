@@ -11,7 +11,7 @@ LIBS := \
 	-L/usr/lib -lOpenGL -lglfw -lGLEW -lassimp \
 	-L$(ENGINEDIR) -l$(ENGINE)
 
-OUT := hello-2d-world
+OUT := tangram2d
 
 all : release
 

@@ -27,7 +27,7 @@ typedef struct {
 } Vertex;
 
 typedef struct {
-  glm::vec4 value;
+  GLfloat value[4];
 } Color;
 
 // Triangle 
@@ -134,7 +134,7 @@ void TangramObject::draw(mgl::ShaderProgram * Shaders, GLint MatrixId, const glm
   Shaders->bind();
 
   glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(transformation));
-  glUniform4f(ColorId, color.value.x, color.value.y, color.value.z, color.value.w);
+  glUniform4fv(ColorId, 1, color.value);
   glDrawElements(GL_TRIANGLES, NumberOfIndices, GL_UNSIGNED_BYTE,
                  reinterpret_cast<GLvoid *>(0));
   
