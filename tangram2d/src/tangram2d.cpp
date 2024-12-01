@@ -23,7 +23,6 @@
 
 typedef struct {
   GLfloat XYZW[4];
-  GLfloat RGBA[4];
 } Vertex;
 
 typedef struct {
@@ -33,9 +32,9 @@ typedef struct {
 // Triangle 
 
 const Vertex TriangleVertices[] = {
-    {{-0.25f, -0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.25f, -0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{-0.25f, 0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
+    {-0.25f, -0.25f, 0.0f, 1.0f},
+    {0.25f, -0.25f, 0.0f, 1.0f},
+    {-0.25f, 0.25f, 0.0f, 1.0f},
 };
 
 const GLubyte TriangleIndices[] = {0, 1, 2};
@@ -43,10 +42,10 @@ const GLubyte TriangleIndices[] = {0, 1, 2};
 // Square
 
 const Vertex SquareVertices[] {
-    {{-0.25f, -0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.25f, -0.250f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{-0.25f, 0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.25f, 0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}
+    {-0.25f, -0.25f, 0.0f, 1.0f}, 
+    {0.25f, -0.250f, 0.0f, 1.0f}, 
+    {-0.25f, 0.25f, 0.0f, 1.0f},
+    {0.25f, 0.25f, 0.0f, 1.0f}, 
 };
 
 
@@ -58,10 +57,10 @@ const GLubyte SquareIndices[] = {
 // Paralelogram
 
 const Vertex ParalelogramVertices[] = {
-  {{-0.5f, -0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-  {{0.0f, -0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-  {{0.0f, 0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-  {{0.5f, 0.25f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
+  {-0.5f, -0.25f, 0.0f, 1.0f},
+  {0.0f, -0.25f, 0.0f, 1.0f},
+  {0.0f, 0.25f, 0.0f, 1.0f},
+  {0.5f, 0.25f, 0.0f, 1.0f},
 };
 
 const GLubyte ParalelogramIndices[] = {
