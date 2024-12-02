@@ -101,10 +101,6 @@ TangramObject::TangramObject(const Vertex Vertices[], size_t SizeOfVertices, con
       glEnableVertexAttribArray(POSITION);
       glVertexAttribPointer(POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                             reinterpret_cast<GLvoid *>(0));
-      glEnableVertexAttribArray(COLOR);
-      glVertexAttribPointer(
-          COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-          reinterpret_cast<GLvoid *>(sizeof(Vertices[0].XYZW)));
     }
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VboId[1]);
     {
@@ -123,7 +119,6 @@ TangramObject::TangramObject(const Vertex Vertices[], size_t SizeOfVertices, con
 void TangramObject::destroyBufferObject() {
   glBindVertexArray(VaoId);
   glDisableVertexAttribArray(POSITION);
-  glDisableVertexAttribArray(COLOR);
   glDeleteVertexArrays(1, &VaoId);
   glBindVertexArray(0);
 }
@@ -180,7 +175,6 @@ void MyApp::createShaderProgram() {
   Shaders->addShader(GL_FRAGMENT_SHADER, "clip-fs.glsl");
 
   Shaders->addAttribute(mgl::POSITION_ATTRIBUTE, POSITION);
-  Shaders->addAttribute(mgl::COLOR_ATTRIBUTE, COLOR);
   Shaders->addUniform("Matrix");
   Shaders->addUniform("Color");
   Shaders->create();
@@ -198,6 +192,10 @@ void MyApp::createBufferObjects() {
 void MyApp::destroyBufferObjects() {
   TriangleObject->destroyBufferObject();
   delete TriangleObject;
+  SquareObject->destroyBufferObject();
+  delete SquareObject;
+  ParallelogramObject->destroyBufferObject();
+  delete ParallelogramObject;
 }
 
 ////////////////////////////////////////////////////////////////////////// SCENE
