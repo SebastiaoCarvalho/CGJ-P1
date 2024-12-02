@@ -2,6 +2,8 @@
 
 ## Install dependencies
 
+For Ubuntu (other linux distributions have similar comands):
+
 ```bash
 sudo apt-get install libassimp-dev
 sudo apt-get install libglm-dev
