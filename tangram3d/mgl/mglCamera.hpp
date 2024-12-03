@@ -23,11 +23,15 @@ class Camera {
  private:
   glm::mat4 ViewMatrix;
   glm::mat4 ProjectionMatrix;
+  bool isActive;
+  GLuint BindingPoint;
 
  public:
   GLuint UboId;
-  explicit Camera(GLuint bindingpoint);
+  explicit Camera(GLuint bindingpoint, bool active);
   virtual ~Camera();
+  void bind();
+  void unbind();
   glm::mat4 getViewMatrix() const;
   void updateViewMatrix(const glm::mat4 &viewmatrix);
   void setViewMatrix();

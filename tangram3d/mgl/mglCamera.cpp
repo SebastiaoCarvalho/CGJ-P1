@@ -14,16 +14,26 @@ namespace mgl {
 
 ///////////////////////////////////////////////////////////////////////// Camera
 
-Camera::Camera(GLuint bindingpoint)
+Camera::Camera(GLuint bindingpoint, bool active)
     : ViewMatrix(glm::mat4(1.0f)), ProjectionMatrix(glm::mat4(1.0f)) {
-  glGenBuffers(1, &UboId);
-  glBindBuffer(GL_UNIFORM_BUFFER, UboId);
-  glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, 0, GL_STREAM_DRAW);
-  glBindBufferBase(GL_UNIFORM_BUFFER, bindingpoint, UboId);
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  isActive = active;
+  BindingPoint = bindingpoint;
+  if (isActive) bind();
 }
 
 Camera::~Camera() {
+  unbind();
+}
+
+void Camera::bind() {
+  glGenBuffers(1, &UboId);
+  glBindBuffer(GL_UNIFORM_BUFFER, UboId);
+  glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, 0, GL_STREAM_DRAW);
+  glBindBufferBase(GL_UNIFORM_BUFFER, BindingPoint, UboId);
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void Camera::unbind() {
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
   glDeleteBuffers(1, &UboId);
 }

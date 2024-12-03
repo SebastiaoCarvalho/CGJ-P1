@@ -31,7 +31,6 @@ class MyApp : public mgl::App {
 
  private:
   const GLuint UBO_BP = 0;
-  const GLuint UBO_BP2 = 1;
   mgl::ShaderProgram *Shaders = nullptr;
   mgl::Camera *Camera1 = nullptr;
   mgl::Camera *Camera2 = nullptr;
@@ -46,6 +45,7 @@ class MyApp : public mgl::App {
   void createShaderPrograms();
   void createCamera();
   void drawScene();
+  void switchCamera();
 };
 
 ///////////////////////////////////////////////////////////////////////// MESHES
@@ -127,15 +127,24 @@ const glm::mat4 ProjectionMatrix2 =
     glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, 1.0f, 10.0f);
 
 void MyApp::createCamera() {
-  Camera1 = new mgl::Camera(UBO_BP);
+  Camera1 = new mgl::Camera(UBO_BP, true);
   Camera1->updateViewMatrix(ViewMatrix1);
   Camera1->updateProjectionMatrix(ProjectionMatrix1);
-  Camera2 = new mgl::Camera(UBO_BP2);
+  Camera2 = new mgl::Camera(UBO_BP, false);
   Camera2->updateViewMatrix(ViewMatrix2);
   Camera2->updateProjectionMatrix(ProjectionMatrix2);
   CurrentCamera = Camera1;
   CurrentCamera->setViewMatrix();
   CurrentCamera->setProjectionMatrix();
+}
+
+void MyApp::switchCamera() {
+  CurrentCamera->unbind();
+  CurrentCamera = (CurrentCamera == Camera1) ? Camera2 : Camera1;
+  CurrentCamera->bind();
+  CurrentCamera->setViewMatrix();
+  CurrentCamera->setProjectionMatrix();
+  printMatrix(CurrentCamera->getProjectionMatrix());
 }
 
 /////////////////////////////////////////////////////////////////////////// DRAW
@@ -171,14 +180,8 @@ void MyApp::mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
 void MyApp::scrollCallback(GLFWwindow *win, double xoffset, double yoffset) {}
 
 void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int mods) {
-  if (action == 0) return;
-  std::cout << "Key: " << key << " action: " << action << std::endl;
-  CurrentCamera = (CurrentCamera == Camera1) ? Camera2 : Camera1;
-  std::cout << "Current Camera: " << CurrentCamera << std::endl;
-  CurrentCamera->setViewMatrix();
-  CurrentCamera->setProjectionMatrix();
-  std ::cout << "Projection Matrix:" << std::endl;
-  printMatrix(CurrentCamera->getProjectionMatrix());
+  if (action == 1 && key == GLFW_KEY_C)
+    switchCamera();
 }
 
 void MyApp::printMatrix(const glm::mat4 &matrix) {
