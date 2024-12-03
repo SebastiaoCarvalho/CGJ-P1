@@ -12,6 +12,7 @@ cmake_install.cmake
 build
 lab1
 tangram2d/src/tangram2d
+tangram3d/src/mesh-loader
 
 
 # delivery
