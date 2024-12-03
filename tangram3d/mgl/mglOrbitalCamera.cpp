@@ -26,4 +26,8 @@ namespace mgl {
         setViewMatrix();
         setProjectionMatrix();
     }
+
+    void OrbitalCamera::rotate(double yaw, double pitch) {
+        
+    }
 }

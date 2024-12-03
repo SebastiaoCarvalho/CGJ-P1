@@ -15,6 +15,7 @@ class OrbitalCamera : public Camera {
     public:
         OrbitalCamera(GLuint bindingPoint, bool active, glm::vec3 eye, glm::vec3 center, glm::vec3 up);
         void zoom(double yoffset);
+        void rotate(double yaw, double pitch);
 };
 
 }
