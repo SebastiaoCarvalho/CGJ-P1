@@ -21,17 +21,19 @@ class Camera;
 
 class Camera {
  private:
-  GLuint UboId;
   glm::mat4 ViewMatrix;
   glm::mat4 ProjectionMatrix;
 
  public:
+  GLuint UboId;
   explicit Camera(GLuint bindingpoint);
   virtual ~Camera();
   glm::mat4 getViewMatrix() const;
-  void setViewMatrix(const glm::mat4 &viewmatrix);
+  void updateViewMatrix(const glm::mat4 &viewmatrix);
+  void setViewMatrix();
   glm::mat4 getProjectionMatrix() const;
-  void setProjectionMatrix(const glm::mat4 &projectionmatrix);
+  void updateProjectionMatrix(const glm::mat4 &projectionmatrix);
+  void setProjectionMatrix();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

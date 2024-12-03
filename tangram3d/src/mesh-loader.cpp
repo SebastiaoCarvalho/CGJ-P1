@@ -27,14 +27,21 @@ class MyApp : public mgl::App {
   void mouseButtonCallback(GLFWwindow *win, int button, int action, int mods) override;
   void scrollCallback(GLFWwindow *win, double xoffset, double yoffset) override;
   void keyCallback(GLFWwindow *win, int key, int scancode, int action, int mods) override;
+  void printMatrix(const glm::mat4 &matrix);
 
  private:
   const GLuint UBO_BP = 0;
+  const GLuint UBO_BP2 = 1;
   mgl::ShaderProgram *Shaders = nullptr;
-  mgl::Camera *Camera = nullptr;
+  mgl::Camera *Camera1 = nullptr;
+  mgl::Camera *Camera2 = nullptr;
+  mgl::Camera *CurrentCamera = nullptr;
+  /* mgl::SceneGraph *Scene = nullptr; */
   GLint ModelMatrixId;
+  GLint CameraId;
   mgl::Mesh *Mesh = nullptr;
 
+  void createSceneGraph();
   void createMeshes();
   void createShaderPrograms();
   void createCamera();
@@ -89,8 +96,16 @@ void MyApp::createShaderPrograms() {
   Shaders->create();
 
   ModelMatrixId = Shaders->Uniforms[mgl::MODEL_MATRIX].index;
+  CameraId = Shaders->Ubos[mgl::CAMERA_BLOCK].index;
 }
 
+///////////////////////////////////////////////////////////////////////// SCENE GRAPH
+/* void MyApp::createSceneGraph() {
+  Scene = new mgl::SceneGraph();
+  mgl::SceneNode *Root = new mgl::SceneNode();
+  
+}
+ */
 ///////////////////////////////////////////////////////////////////////// CAMERA
 
 // Eye(5,5,5) Center(0,0,0) Up(0,1,0)
@@ -112,9 +127,15 @@ const glm::mat4 ProjectionMatrix2 =
     glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, 1.0f, 10.0f);
 
 void MyApp::createCamera() {
-  Camera = new mgl::Camera(UBO_BP);
-  Camera->setViewMatrix(ViewMatrix1);
-  Camera->setProjectionMatrix(ProjectionMatrix2);
+  Camera1 = new mgl::Camera(UBO_BP);
+  Camera1->updateViewMatrix(ViewMatrix1);
+  Camera1->updateProjectionMatrix(ProjectionMatrix1);
+  Camera2 = new mgl::Camera(UBO_BP2);
+  Camera2->updateViewMatrix(ViewMatrix2);
+  Camera2->updateProjectionMatrix(ProjectionMatrix2);
+  CurrentCamera = Camera1;
+  CurrentCamera->setViewMatrix();
+  CurrentCamera->setProjectionMatrix();
 }
 
 /////////////////////////////////////////////////////////////////////////// DRAW
@@ -150,8 +171,24 @@ void MyApp::mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
 void MyApp::scrollCallback(GLFWwindow *win, double xoffset, double yoffset) {}
 
 void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int mods) {
+  if (action == 0) return;
+  std::cout << "Key: " << key << " action: " << action << std::endl;
+  CurrentCamera = (CurrentCamera == Camera1) ? Camera2 : Camera1;
+  std::cout << "Current Camera: " << CurrentCamera << std::endl;
+  CurrentCamera->setViewMatrix();
+  CurrentCamera->setProjectionMatrix();
+  std ::cout << "Projection Matrix:" << std::endl;
+  printMatrix(CurrentCamera->getProjectionMatrix());
 }
 
+void MyApp::printMatrix(const glm::mat4 &matrix) {
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      std::cout << matrix[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
 
 /////////////////////////////////////////////////////////////////////////// MAIN
 
