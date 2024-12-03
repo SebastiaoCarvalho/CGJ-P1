@@ -32,16 +32,18 @@ class MyApp : public mgl::App {
  private:
   const GLuint UBO_BP = 0;
   mgl::ShaderProgram *Shaders = nullptr;
-  mgl::Camera *Camera1 = nullptr;
-  mgl::Camera *Camera2 = nullptr;
-  mgl::Camera *CurrentCamera = nullptr;
+  mgl::OrbitalCamera *Camera1 = nullptr;
+  mgl::OrbitalCamera *Camera2 = nullptr;
+  mgl::OrbitalCamera *CurrentCamera = nullptr;
   /* mgl::SceneGraph *Scene = nullptr; */
   GLint ModelMatrixId;
   GLint CameraId;
   mgl::Mesh *Mesh = nullptr;
+  mgl::KeyManager *KeyManager = nullptr;
 
   void createSceneGraph();
   void createMeshes();
+  void createManagers();
   void createShaderPrograms();
   void createCamera();
   void drawScene();
@@ -72,6 +74,8 @@ void MyApp::createMeshes() {
   Mesh->joinIdenticalVertices();
   Mesh->create(mesh_fullname);
 }
+
+void MyApp::createManagers() { KeyManager = new mgl::KeyManager(); }
 
 ///////////////////////////////////////////////////////////////////////// SHADER
 
@@ -127,11 +131,9 @@ const glm::mat4 ProjectionMatrix2 =
     glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, 1.0f, 10.0f);
 
 void MyApp::createCamera() {
-  Camera1 = new mgl::Camera(UBO_BP, true);
-  Camera1->updateViewMatrix(ViewMatrix1);
+  Camera1 = new mgl::OrbitalCamera(UBO_BP, true, glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   Camera1->updateProjectionMatrix(ProjectionMatrix1);
-  Camera2 = new mgl::Camera(UBO_BP, false);
-  Camera2->updateViewMatrix(ViewMatrix2);
+  Camera2 = new mgl::OrbitalCamera(UBO_BP, false, glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   Camera2->updateProjectionMatrix(ProjectionMatrix2);
   CurrentCamera = Camera1;
   CurrentCamera->setViewMatrix();
@@ -164,6 +166,7 @@ void MyApp::initCallback(GLFWwindow *win) {
   createMeshes();
   createShaderPrograms();  // after mesh;
   createCamera();
+  createManagers();
 }
 
 void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy) {
@@ -177,11 +180,27 @@ void MyApp::mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
   std::cout << "Mouse button: " << button << " action: " << action << std::endl;
 }
 
-void MyApp::scrollCallback(GLFWwindow *win, double xoffset, double yoffset) {}
+void MyApp::scrollCallback(GLFWwindow *win, double xoffset, double yoffset) {
+  std::cout << "Scroll: " << yoffset << std::endl;
+  CurrentCamera->zoom(yoffset); 
+  printMatrix(CurrentCamera->getViewMatrix());
+}
 
 void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int mods) {
-  if (action == 1 && key == GLFW_KEY_C)
-    switchCamera();
+  if (action == GLFW_PRESS)
+    KeyManager->press(key);
+  else if (action == GLFW_RELEASE)
+    KeyManager->release(key);
+  switch(key) {
+    case GLFW_KEY_C:
+      if (KeyManager->isPressed(key)) {
+        switchCamera();
+      }
+      return;
+    case GLFW_KEY_P:
+      // TODO: change projection 
+      return;
+  }
 }
 
 void MyApp::printMatrix(const glm::mat4 &matrix) {
