@@ -116,29 +116,23 @@ void MyApp::createShaderPrograms() {
  */
 ///////////////////////////////////////////////////////////////////////// CAMERA
 
-// Eye(5,5,5) Center(0,0,0) Up(0,1,0)
-const glm::mat4 ViewMatrix1 =
-    glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-                glm::vec3(0.0f, 1.0f, 0.0f));
-
-// Eye(-5,-5,-5) Center(0,0,0) Up(0,1,0)
-const glm::mat4 ViewMatrix2 =
-    glm::lookAt(glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-                glm::vec3(0.0f, 1.0f, 0.0f));
-
 // Orthographic LeftRight(-2,2) BottomTop(-2,2) NearFar(1,10)
-const glm::mat4 ProjectionMatrix1 =
+const glm::mat4 OrthograpicProjection =
     glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 10.0f);
 
 // Perspective Fovy(30) Aspect(640/480) NearZ(1) FarZ(10)
-const glm::mat4 ProjectionMatrix2 =
+const glm::mat4 PrespectiveProjection =
     glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, 1.0f, 10.0f);
 
 void MyApp::createCamera() {
-  Camera1 = new mgl::OrbitalCamera(UBO_BP, true, glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  Camera1->updateProjectionMatrix(ProjectionMatrix1);
-  Camera2 = new mgl::OrbitalCamera(UBO_BP, false, glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  Camera2->updateProjectionMatrix(ProjectionMatrix2);
+  Camera1 = new mgl::OrbitalCamera(
+    UBO_BP, true, glm::vec3(5.0f, 0, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 
+    PrespectiveProjection, OrthograpicProjection
+  );
+  Camera2 = new mgl::OrbitalCamera(
+    UBO_BP, false, glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
+    PrespectiveProjection, OrthograpicProjection
+  );
   CurrentCamera = Camera1;
   CurrentCamera->setViewMatrix();
   CurrentCamera->setProjectionMatrix();
@@ -222,7 +216,9 @@ void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int 
       }
       return;
     case GLFW_KEY_P:
-      // TODO: change projection 
+      if (KeyManager->isPressed(key)) {
+        CurrentCamera->switchProjection();
+      }
       return;
   }
 }

@@ -12,10 +12,24 @@ class OrbitalCamera : public Camera {
         glm::vec3 eye;
         glm::vec3 center;
         glm::vec3 up;
+        glm::mat4 prespectiveProjectionMatrix;
+        glm::mat4 orthographicProjectionMatrix;
+        bool isOrthographic = false;
     public:
-        OrbitalCamera(GLuint bindingPoint, bool active, glm::vec3 eye, glm::vec3 center, glm::vec3 up);
+        OrbitalCamera(
+            GLuint bindingPoint, 
+            bool active, 
+            glm::vec3 eye, 
+            glm::vec3 center, 
+            glm::vec3 up, 
+            glm::mat4 prespectiveProjectionMatrix, 
+            glm::mat4 orthographicProjectionMatrix
+        );
         void zoom(double yoffset);
         void rotate(double yaw, double pitch);
+        void switchProjection();
+        void switchToOrthographic();
+        void switchToPerspective();
 };
 
 }
