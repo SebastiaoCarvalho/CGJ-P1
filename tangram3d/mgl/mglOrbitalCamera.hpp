@@ -12,8 +12,14 @@ class OrbitalCamera : public Camera {
         glm::vec3 eye;
         glm::vec3 center;
         glm::vec3 up;
-        glm::mat4 prespectiveProjectionMatrix;
-        glm::mat4 orthographicProjectionMatrix;
+        float left;
+        float right;
+        float bottom;
+        float top;
+        float near;
+        float far;
+        float fovy;
+        float ratio;
         bool isOrthographic = false;
     public:
         OrbitalCamera(
@@ -22,14 +28,25 @@ class OrbitalCamera : public Camera {
             glm::vec3 eye, 
             glm::vec3 center, 
             glm::vec3 up, 
-            glm::mat4 prespectiveProjectionMatrix, 
-            glm::mat4 orthographicProjectionMatrix
+            float left,
+            float right,
+            float bottom,
+            float top,
+            float near,
+            float far,
+            float fovy,
+            float ratio
         );
+
+        void updateViewMatrix();
+        void updateProjectionMatrix();
+
         void zoom(double yoffset);
         void rotate(double yaw, double pitch);
         void switchProjection();
         void switchToOrthographic();
         void switchToPerspective();
+        void updateViewPort(int width, int height);
 };
 
 }

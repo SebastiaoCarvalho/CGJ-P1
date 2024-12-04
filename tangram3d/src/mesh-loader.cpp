@@ -117,21 +117,15 @@ void MyApp::createShaderPrograms() {
 ///////////////////////////////////////////////////////////////////////// CAMERA
 
 // Orthographic LeftRight(-2,2) BottomTop(-2,2) NearFar(1,10)
-const glm::mat4 OrthograpicProjection =
-    glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 10.0f);
-
-// Perspective Fovy(30) Aspect(640/480) NearZ(1) FarZ(10)
-const glm::mat4 PrespectiveProjection =
-    glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, 1.0f, 10.0f);
 
 void MyApp::createCamera() {
   Camera1 = new mgl::OrbitalCamera(
     UBO_BP, true, glm::vec3(5.0f, 0, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 
-    PrespectiveProjection, OrthograpicProjection
+    -2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 10.0f, 30.0f, 640.0f / 480.0f
   );
   Camera2 = new mgl::OrbitalCamera(
     UBO_BP, false, glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-    PrespectiveProjection, OrthograpicProjection
+    -2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 10.0f, 30.0f, 640.0f / 480.0
   );
   CurrentCamera = Camera1;
   CurrentCamera->setViewMatrix();
@@ -169,7 +163,7 @@ void MyApp::initCallback(GLFWwindow *win) {
 
 void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy) {
   glViewport(0, 0, winx, winy);
-  // change projection matrices to maintain aspect ratio
+  CurrentCamera->updateViewPort(winx, winy);
 }
 
 void MyApp::displayCallback(GLFWwindow *win, double elapsed) { drawScene(); }

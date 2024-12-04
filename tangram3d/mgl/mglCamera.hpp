@@ -38,6 +38,7 @@ class Camera {
   glm::mat4 getProjectionMatrix() const;
   void updateProjectionMatrix(const glm::mat4 &projectionmatrix);
   void setProjectionMatrix();
+  void refresh();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

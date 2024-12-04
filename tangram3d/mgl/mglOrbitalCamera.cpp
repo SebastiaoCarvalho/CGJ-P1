@@ -8,16 +8,22 @@ namespace mgl {
 
     OrbitalCamera::OrbitalCamera(
         GLuint bindingPoint, bool active, glm::vec3 eye, glm::vec3 center, glm::vec3 up, 
-        glm::mat4 prespectiveProjectionMatrix, glm::mat4 orthographicProjectionMatrix
+        float left, float right, float bottom, float top, float near, float far, float fovy, float ratio
         ) : Camera(bindingPoint, active) {
             this->eye = eye;
             this->center = center;
             this->up = up;
-            this->prespectiveProjectionMatrix = prespectiveProjectionMatrix;
-            this->orthographicProjectionMatrix = orthographicProjectionMatrix;
+            this->left = left;
+            this->right = right;
+            this->bottom = bottom;
+            this->top = top;
+            this->near = near;
+            this->far = far;
+            this->fovy = fovy;
+            this->ratio = ratio;
             this->isOrthographic = false;
-            updateViewMatrix(glm::lookAt(eye, center, up));
-            updateProjectionMatrix(prespectiveProjectionMatrix);
+            updateViewMatrix();
+            updateProjectionMatrix();
     }
 
     void OrbitalCamera::zoom(double yoffset) {
@@ -27,11 +33,8 @@ namespace mgl {
         glm::vec3 translation = direction * (float)yoffset;
         std::cout << "translation : " << translation[0] << " " << translation[1] << " " << translation[2] << std::endl;
         eye += translation;
-        updateViewMatrix(glm::lookAt(eye, center, up));
-        unbind();
-        bind();
-        setViewMatrix();
-        setProjectionMatrix();
+        updateViewMatrix();
+        refresh();
     }
 
     void OrbitalCamera::rotate(double yaw, double pitch) {
@@ -47,11 +50,8 @@ namespace mgl {
         std::cout << "eye: " << eye[0] << " " << eye[1] << " " << eye[2] << std::endl;
         up = glm::normalize(glm::vec3(rotation * glm::vec4(up, 0.0f)));
         std::cout <<"up :" << up[0] << " " << up[1] << " " << up[2] << std::endl;
-        updateViewMatrix(glm::lookAt(eye, center, up));
-        unbind();
-        bind();
-        setViewMatrix();
-        setProjectionMatrix();
+        updateViewMatrix();
+        refresh();
     }
 
     void OrbitalCamera::switchProjection() {
@@ -64,19 +64,31 @@ namespace mgl {
 
     void OrbitalCamera::switchToOrthographic() {
         isOrthographic = true;
-        updateProjectionMatrix(orthographicProjectionMatrix);
-        unbind();
-        bind();
-        setViewMatrix();
-        setProjectionMatrix();
+        updateProjectionMatrix();
+        refresh();
     }
 
     void OrbitalCamera::switchToPerspective() {
         isOrthographic = false;
-        updateProjectionMatrix(prespectiveProjectionMatrix);
-        unbind();
-        bind();
-        setViewMatrix();
-        setProjectionMatrix();
+        updateProjectionMatrix();
+        refresh();
+    }
+
+    void OrbitalCamera::updateViewMatrix() {
+        Camera::updateViewMatrix(glm::lookAt(eye, center, up));
+    }
+
+    void OrbitalCamera::updateProjectionMatrix() {
+        if (isOrthographic) {
+            Camera::updateProjectionMatrix(glm::ortho(left * ratio, right * ratio, bottom * ratio , top * ratio, near, far));
+        } else {
+            Camera::updateProjectionMatrix(glm::perspective(fovy, ratio, near, far));
+        }
+    }
+
+    void OrbitalCamera::updateViewPort(int width, int height) {
+        ratio = (float)width / (float)height;
+        updateProjectionMatrix();
+        refresh();
     }
 }

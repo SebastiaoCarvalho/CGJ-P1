@@ -64,5 +64,12 @@ void Camera::setProjectionMatrix() {
   glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
+void Camera::refresh() {
+  unbind();
+  bind();
+  setViewMatrix();
+  setProjectionMatrix();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 }  // namespace mgl
