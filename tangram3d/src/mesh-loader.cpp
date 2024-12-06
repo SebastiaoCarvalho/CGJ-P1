@@ -166,7 +166,6 @@ void MyApp::switchCamera() {
   CurrentCamera->bind();
   CurrentCamera->setViewMatrix();
   CurrentCamera->setProjectionMatrix();
-  printMatrix(CurrentCamera->getProjectionMatrix());
 }
 
 /////////////////////////////////////////////////////////////////////////// DRAW
@@ -190,7 +189,10 @@ void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy) {
   CurrentCamera->updateViewPort(winx, winy);
 }
 
-void MyApp::displayCallback(GLFWwindow *win, double elapsed) { drawScene(); }
+void MyApp::displayCallback(GLFWwindow *win, double elapsed) { 
+  CurrentCamera->update(elapsed);
+  drawScene();
+}
 
 void MyApp::mouseButtonCallback(GLFWwindow *win, int button, int action, int mods) {
   if (button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -204,7 +206,6 @@ void MyApp::mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
 
 void MyApp::cursorCallback(GLFWwindow *win, double xpos, double ypos) {
   if (isMousePressed) {
-    std::cout << "Cursor: " << xpos << " " << ypos << std::endl;
     double dx = xpos - prevX;
     double dy = ypos - prevY;
     double yaw = glm::radians(dx);
@@ -217,9 +218,7 @@ void MyApp::cursorCallback(GLFWwindow *win, double xpos, double ypos) {
 }
 
 void MyApp::scrollCallback(GLFWwindow *win, double xoffset, double yoffset) {
-  std::cout << "Scroll: " << yoffset << std::endl;
   CurrentCamera->zoom(yoffset);
-  printMatrix(CurrentCamera->getViewMatrix());
 }
 
 void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int mods) {

@@ -21,6 +21,9 @@ class OrbitalCamera : public Camera {
         float fovy;
         float ratio;
         bool isOrthographic = false;
+        float zoomValue;
+        float yaw;
+        float pitch;
     public:
         OrbitalCamera(
             GLuint bindingPoint, 
@@ -37,12 +40,13 @@ class OrbitalCamera : public Camera {
             float fovy,
             float ratio
         );
-
+        void update(float deltaTime);
         void updateViewMatrix();
         void updateProjectionMatrix();
-
-        void zoom(double yoffset);
         void rotate(double yaw, double pitch);
+        void zoom(double yoffset);
+        void applyZoom(double deltaTime);
+        void applyRotate(double deltaTime);
         void switchProjection();
         void switchToOrthographic();
         void switchToPerspective();
