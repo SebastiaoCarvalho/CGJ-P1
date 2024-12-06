@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "./mglScenegraph.hpp"
+#include "./mglDrawable.hpp"
 
 namespace mgl {
 

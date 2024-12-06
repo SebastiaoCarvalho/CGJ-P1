@@ -16,6 +16,7 @@
 #include "./mglCamera.hpp"       // IWYU pragma: keep
 #include "./mglConventions.hpp"  // IWYU pragma: keep
 #include "./mglError.hpp"        // IWYU pragma: keep
+#include "./mglDrawable.hpp"
 #include "./mglKeyManager.hpp"   // IWYU pragma: keep
 #include "./mglManager.hpp"      // IWYU pragma: keep
 #include "./mglMesh.hpp"         // IWYU pragma: keep

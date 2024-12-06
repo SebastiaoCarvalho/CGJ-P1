@@ -17,6 +17,32 @@
 
 #include "../mgl/mgl.hpp"
 
+////////////////////////////////////////////////////////////////////////// Tangram Pieces
+class TangramPiece : public mgl::SceneNode {
+  private:
+    glm::vec4 Color;
+    GLuint ColorId;
+  public:
+    TangramPiece(
+      SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram, const glm::mat4 &modelmatrix, 
+      GLuint modelmatrixid, glm::vec4 color, GLuint colorId
+      ) 
+      : SceneNode(parent, mesh, shaderprogram, modelmatrix, modelmatrixid) {
+      Color = color;
+      ColorId = colorId;
+    }
+    virtual ~TangramPiece() {}
+    void draw() override;
+};
+
+void TangramPiece::draw() {
+  Shaders->bind();
+  glUniformMatrix4fv(ModelMatrixId, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+  glUniform4fv(ColorId, 1, glm::value_ptr(Color));
+  Mesh->draw();
+  Shaders->unbind();
+}
+
 ////////////////////////////////////////////////////////////////////////// MYAPP
 
 class MyApp : public mgl::App {
@@ -36,7 +62,7 @@ class MyApp : public mgl::App {
   mgl::OrbitalCamera *Camera1 = nullptr;
   mgl::OrbitalCamera *Camera2 = nullptr;
   mgl::OrbitalCamera *CurrentCamera = nullptr;
-  /* mgl::SceneGraph *Scene = nullptr; */
+  mgl::SceneGraph *Scene = nullptr;
   GLint ModelMatrixId;
   GLint CameraId;
   bool isMousePressed = false;
@@ -100,6 +126,7 @@ void MyApp::createShaderPrograms() {
   }
 
   Shaders->addUniform(mgl::MODEL_MATRIX);
+  Shaders->addUniform(mgl::COLOR);
   Shaders->addUniformBlock(mgl::CAMERA_BLOCK, UBO_BP);
   Shaders->create();
 
@@ -108,12 +135,13 @@ void MyApp::createShaderPrograms() {
 }
 
 ///////////////////////////////////////////////////////////////////////// SCENE GRAPH
-/* void MyApp::createSceneGraph() {
+void MyApp::createSceneGraph() {
   Scene = new mgl::SceneGraph();
-  mgl::SceneNode *Root = new mgl::SceneNode();
-  
+  glm::mat4 ModelMatrix(1.0f);
+  mgl::SceneNode *Root = new mgl::SceneNode(NULL, Mesh, Shaders, ModelMatrix, ModelMatrixId);
+  Scene->setRoot(Root);
 }
- */
+
 ///////////////////////////////////////////////////////////////////////// CAMERA
 
 // Orthographic LeftRight(-2,2) BottomTop(-2,2) NearFar(1,10)
@@ -143,13 +171,8 @@ void MyApp::switchCamera() {
 
 /////////////////////////////////////////////////////////////////////////// DRAW
 
-glm::mat4 ModelMatrix(1.0f);
-
 void MyApp::drawScene() {
-  Shaders->bind();
-  glUniformMatrix4fv(ModelMatrixId, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
-  Mesh->draw();
-  Shaders->unbind();
+  Scene->draw();
 }
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
@@ -158,6 +181,7 @@ void MyApp::initCallback(GLFWwindow *win) {
   createMeshes();
   createShaderPrograms();  // after mesh;
   createCamera();
+  createSceneGraph();
   createManagers();
 }
 
@@ -213,6 +237,12 @@ void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int 
       if (KeyManager->isPressed(key)) {
         CurrentCamera->switchProjection();
       }
+      return;
+    case GLFW_KEY_LEFT:
+    if (KeyManager->isPressed(key)) {}
+      return;
+    case GLFW_KEY_RIGHT:
+    if (KeyManager->isPressed(key)) {}
       return;
   }
 }

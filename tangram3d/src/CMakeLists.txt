@@ -2,13 +2,13 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Create the executable
-project(hello-3d-world LANGUAGES CXX)
+project(mesh-loader LANGUAGES CXX)
 
 # Source files
-set(SRC_SOURCES hello-3d-world.cpp)
+set(SRC_SOURCES mesh-loader.cpp)
 
 # GLSL shader files
-set(SHADER_FILES color-fs.glsl color-vs.glsl)
+set(SHADER_FILES cube-fs.glsl cube-vs.glsl)
 
 # Add the executable
 add_executable(${PROJECT_NAME} ${SRC_SOURCES})
