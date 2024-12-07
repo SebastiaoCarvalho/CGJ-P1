@@ -28,6 +28,7 @@ class SceneGraph : public IDrawable {
  public:
   SceneGraph();
   virtual ~SceneGraph();
+  SceneNode * getRoot();
   void setRoot(SceneNode *root);
   void draw();
   private:
@@ -47,6 +48,7 @@ class SceneNode : public IDrawable {
     SceneNode(SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram, const glm::mat4 &modelmatrix, GLuint modelmatrixid);
     virtual ~SceneNode();
     void draw();
+    void drawSelf();
     void addChild(SceneNode *child);
     void setMesh(mgl::Mesh *mesh);
     void setShaderProgram(mgl::ShaderProgram *shaderprogram);

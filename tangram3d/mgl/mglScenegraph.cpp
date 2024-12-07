@@ -10,6 +10,10 @@ namespace mgl {
         Root->draw();
     }
 
+    SceneNode *SceneGraph::getRoot() {
+        return Root;
+    }
+
     void SceneGraph::setRoot(SceneNode *root) {
         Root = root;
     }
@@ -44,6 +48,13 @@ namespace mgl {
     }
 
     void SceneNode::draw() {
+        if (Mesh) drawSelf();
+        for (auto child : Children) {
+            child->draw();
+        }
+    }
+
+    void SceneNode::drawSelf() {
         Shaders->bind();
         glUniformMatrix4fv(ModelMatrixId, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
         Mesh->draw();

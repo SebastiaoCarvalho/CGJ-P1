@@ -17,6 +17,16 @@
 
 #include "../mgl/mgl.hpp"
 
+////////////////////////////////////////////////////////////////////////// TANGRAM
+class TangramPiece;
+
+class Tangram : public mgl::SceneGraph {
+  public:
+    void changeToBox(double deltaTime);
+    void changeToTangram(double deltaTime);
+    TangramPiece *getRoot() { return (TangramPiece *)SceneGraph::getRoot(); }
+};
+
 ////////////////////////////////////////////////////////////////////////// Tangram Pieces
 class TangramPiece : public mgl::SceneNode {
   private:
@@ -26,14 +36,32 @@ class TangramPiece : public mgl::SceneNode {
     TangramPiece(
       SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram, const glm::mat4 &modelmatrix, 
       GLuint modelmatrixid, glm::vec4 color, GLuint colorId
-      ) 
-      : SceneNode(parent, mesh, shaderprogram, modelmatrix, modelmatrixid) {
-      Color = color;
-      ColorId = colorId;
-    }
-    virtual ~TangramPiece() {}
+      );
+    virtual ~TangramPiece();
     void draw() override;
+    void changeToBox(double deltaTime);
+    void changeToTangram(double deltaTime);
 };
+
+////////////////////////////////////////////////////////////////////////// TANGRAM AND PIECES IMPLEMENTATION
+
+void Tangram::changeToBox(double deltaTime) {
+  getRoot()->changeToBox(deltaTime);
+}
+
+void Tangram::changeToTangram(double deltaTime) {
+  getRoot()->changeToTangram(deltaTime);
+}
+
+TangramPiece::TangramPiece(
+  SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram, const glm::mat4 &modelmatrix, 
+      GLuint modelmatrixid, glm::vec4 color, GLuint colorId
+  ) : SceneNode(parent, mesh, shaderprogram, modelmatrix, modelmatrixid) {
+  Color = color;
+  ColorId = colorId;
+}
+
+TangramPiece::~TangramPiece() {}
 
 void TangramPiece::draw() {
   Shaders->bind();
@@ -41,6 +69,14 @@ void TangramPiece::draw() {
   glUniform4fv(ColorId, 1, glm::value_ptr(Color));
   Mesh->draw();
   Shaders->unbind();
+}
+
+void TangramPiece::changeToBox(double deltaTime) {
+  std::cout << "Boxing" << std::endl;
+}
+
+void TangramPiece::changeToTangram(double deltaTime) {
+  std::cout << "Tangramming" << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////// MYAPP
@@ -62,8 +98,9 @@ class MyApp : public mgl::App {
   mgl::OrbitalCamera *Camera1 = nullptr;
   mgl::OrbitalCamera *Camera2 = nullptr;
   mgl::OrbitalCamera *CurrentCamera = nullptr;
-  mgl::SceneGraph *Scene = nullptr;
+  Tangram *Scene = nullptr;
   GLint ModelMatrixId;
+  GLint ColorId;
   GLint CameraId;
   bool isMousePressed = false;
   mgl::Mesh *Mesh = nullptr;
@@ -71,6 +108,7 @@ class MyApp : public mgl::App {
   double prevX = 0.0;
   double prevY = 0.0;
 
+  void animate(double elapsed);
   void createSceneGraph();
   void createMeshes();
   void createManagers();
@@ -84,20 +122,7 @@ class MyApp : public mgl::App {
 
 void MyApp::createMeshes() {
   std::string mesh_dir = "../../assets/models/";
-  // std::string mesh_file = "cube-v.obj";
   std::string mesh_file = "cube-vn-flat.obj";
-  // std::string mesh_file = "cube-vn-smooth.obj";
-  // std::string mesh_file = "cube-vt.obj";
-  // std::string mesh_file = "cube-vt2.obj";
-  // std::string mesh_file = "torus-vtn-flat.obj";
-  // std::string mesh_file = "torus-vtn-smooth.obj";
-  // std::string mesh_file = "suzanne-vtn-flat.obj";
-  // std::string mesh_file = "suzanne-vtn-smooth.obj";
-  // std::string mesh_file = "teapot-vn-flat.obj";
-  // std::string mesh_file = "teapot-vn-smooth.obj";
-  // std::string mesh_file = "bunny-vn-flat.obj";
-  // std::string mesh_file = "bunny-vn-smooth.obj";
-  // std::string mesh_file = "monkey-torus-vtn-flat.obj";
   std::string mesh_fullname = mesh_dir + mesh_file;
 
   Mesh = new mgl::Mesh();
@@ -131,29 +156,47 @@ void MyApp::createShaderPrograms() {
   Shaders->create();
 
   ModelMatrixId = Shaders->Uniforms[mgl::MODEL_MATRIX].index;
+  ColorId = Shaders->Uniforms[mgl::COLOR].index;
   CameraId = Shaders->Ubos[mgl::CAMERA_BLOCK].index;
 }
 
 ///////////////////////////////////////////////////////////////////////// SCENE GRAPH
 void MyApp::createSceneGraph() {
-  Scene = new mgl::SceneGraph();
+  Scene = new Tangram();
   glm::mat4 ModelMatrix(1.0f);
-  mgl::SceneNode *Root = new mgl::SceneNode(NULL, Mesh, Shaders, ModelMatrix, ModelMatrixId);
+  TangramPiece *Root = new TangramPiece(NULL, Mesh, Shaders, ModelMatrix, ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId);
   Scene->setRoot(Root);
 }
 
 ///////////////////////////////////////////////////////////////////////// CAMERA
 
-// Orthographic LeftRight(-2,2) BottomTop(-2,2) NearFar(1,10)
+// First Camera position and up vector
+glm::vec3 eyeFrontal = glm::vec3(0.0f, 0.0f, 5.0f);
+glm::vec3 upFrontal = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// Second Camera position and up vector
+glm::vec3 eyeDownward = glm::vec3(0.0f, 5.0f, 0.0f);
+glm::vec3 upDownward = glm::vec3(0.0f, 0.0f, 1.0f);
+
+// Center of the scene
+glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
+
+// Projection settings
+float left = -2.0f;
+float right = 2.0f;
+float bottom = -2.0f;
+float top = 2.0f;
+float near = 1.0f;
+float far = 10.0f;
+float fovy = 30.0f;
+float ratio = 640.0f / 480.0f;
 
 void MyApp::createCamera() {
   Camera1 = new mgl::OrbitalCamera(
-    UBO_BP, true, glm::vec3(5.0f, 0, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 
-    -2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 10.0f, 30.0f, 640.0f / 480.0f
+    UBO_BP, true, eyeFrontal, center, upFrontal, left, right, bottom, top, near, far, fovy, ratio
   );
   Camera2 = new mgl::OrbitalCamera(
-    UBO_BP, false, glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-    -2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 10.0f, 30.0f, 640.0f / 480.0
+    UBO_BP, false, eyeDownward, center, upDownward, left, right, bottom, top, near, far, fovy, ratio
   );
   CurrentCamera = Camera1;
   CurrentCamera->setViewMatrix();
@@ -191,7 +234,17 @@ void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy) {
 
 void MyApp::displayCallback(GLFWwindow *win, double elapsed) { 
   CurrentCamera->update(elapsed);
+  animate(elapsed);
   drawScene();
+}
+
+void MyApp::animate(double elapsed) {
+  if (KeyManager->isPressed(GLFW_KEY_LEFT)) {
+    Scene->changeToBox(elapsed);
+  }
+  if (KeyManager->isPressed(GLFW_KEY_RIGHT)) {
+    Scene->changeToTangram(elapsed);
+  }
 }
 
 void MyApp::mouseButtonCallback(GLFWwindow *win, int button, int action, int mods) {
@@ -236,12 +289,6 @@ void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int 
       if (KeyManager->isPressed(key)) {
         CurrentCamera->switchProjection();
       }
-      return;
-    case GLFW_KEY_LEFT:
-    if (KeyManager->isPressed(key)) {}
-      return;
-    case GLFW_KEY_RIGHT:
-    if (KeyManager->isPressed(key)) {}
       return;
   }
 }
