@@ -38,7 +38,7 @@ class TangramPiece : public mgl::SceneNode {
       GLuint modelmatrixid, glm::vec4 color, GLuint colorId
       );
     virtual ~TangramPiece();
-    void draw() override;
+    void drawSelf() override;
     void changeToBox(double deltaTime);
     void changeToTangram(double deltaTime);
 };
@@ -63,7 +63,7 @@ TangramPiece::TangramPiece(
 
 TangramPiece::~TangramPiece() {}
 
-void TangramPiece::draw() {
+void TangramPiece::drawSelf() {
   Shaders->bind();
   glUniformMatrix4fv(ModelMatrixId, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
   glUniform4fv(ColorId, 1, glm::value_ptr(Color));
@@ -103,7 +103,9 @@ class MyApp : public mgl::App {
   GLint ColorId;
   GLint CameraId;
   bool isMousePressed = false;
-  mgl::Mesh *Mesh = nullptr;
+  mgl::Mesh *TriangleMesh = nullptr;
+  mgl::Mesh *SquareMesh = nullptr;
+  mgl::Mesh * ParallelogramMesh = nullptr;
   mgl::KeyManager *KeyManager = nullptr;
   double prevX = 0.0;
   double prevY = 0.0;
@@ -116,18 +118,41 @@ class MyApp : public mgl::App {
   void createCamera();
   void drawScene();
   void switchCamera();
+
+  TangramPiece * createSmallTriangle(TangramPiece * root);
+  TangramPiece * createSmallTriangle2(TangramPiece * root);
+  TangramPiece * createMediumTriangle(TangramPiece * root);
+  TangramPiece * createLargeTriangle(TangramPiece * root);
+  TangramPiece * createLargeTriangle2(TangramPiece * root);
+  TangramPiece * createSquare(TangramPiece * root);
+  TangramPiece * createParallelogram(TangramPiece * root);
 };
 
 ///////////////////////////////////////////////////////////////////////// MESHES
 
 void MyApp::createMeshes() {
   std::string mesh_dir = "../../assets/models/";
-  std::string mesh_file = "cube-vn-flat.obj";
-  std::string mesh_fullname = mesh_dir + mesh_file;
 
-  Mesh = new mgl::Mesh();
-  Mesh->joinIdenticalVertices();
-  Mesh->create(mesh_fullname);
+  std::string triangle_file = "triangle.obj";
+  std::string triangle_fullname = mesh_dir + triangle_file;
+
+  TriangleMesh = new mgl::Mesh();
+  TriangleMesh->joinIdenticalVertices();
+  TriangleMesh->create(triangle_fullname);
+
+  std::string square_file = "square.obj";
+  std::string square_fullname = mesh_dir + square_file;
+
+  SquareMesh = new mgl::Mesh();
+  SquareMesh->joinIdenticalVertices();
+  SquareMesh->create(square_fullname);
+  
+  std::string parallelogram_file = "parallelogram.obj";
+  std::string parallelogram_fullname = mesh_dir + parallelogram_file;
+
+  ParallelogramMesh = new mgl::Mesh();
+  ParallelogramMesh->joinIdenticalVertices();
+  ParallelogramMesh->create(parallelogram_fullname);
 }
 
 void MyApp::createManagers() { KeyManager = new mgl::KeyManager(); }
@@ -140,13 +165,14 @@ void MyApp::createShaderPrograms() {
   Shaders->addShader(GL_FRAGMENT_SHADER, "cube-fs.glsl");
 
   Shaders->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::Mesh::POSITION);
-  if (Mesh->hasNormals()) {
+  if (TriangleMesh->hasNormals() || SquareMesh->hasNormals() || ParallelogramMesh->hasNormals()) {
     Shaders->addAttribute(mgl::NORMAL_ATTRIBUTE, mgl::Mesh::NORMAL);
   }
-  if (Mesh->hasTexcoords()) {
+  if (TriangleMesh->hasTexcoords() || SquareMesh->hasTexcoords() || ParallelogramMesh->hasTexcoords()) {
     Shaders->addAttribute(mgl::TEXCOORD_ATTRIBUTE, mgl::Mesh::TEXCOORD);
   }
-  if (Mesh->hasTangentsAndBitangents()) {
+  if (TriangleMesh->hasTangentsAndBitangents() || SquareMesh->hasTangentsAndBitangents() 
+    || ParallelogramMesh->hasTangentsAndBitangents()) {
     Shaders->addAttribute(mgl::TANGENT_ATTRIBUTE, mgl::Mesh::TANGENT);
   }
 
@@ -164,8 +190,77 @@ void MyApp::createShaderPrograms() {
 void MyApp::createSceneGraph() {
   Scene = new Tangram();
   glm::mat4 ModelMatrix(1.0f);
-  TangramPiece *Root = new TangramPiece(NULL, Mesh, Shaders, ModelMatrix, ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId);
+  TangramPiece *Root = new TangramPiece(nullptr, nullptr, Shaders, ModelMatrix, ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId);
+  Root->addChild(createSmallTriangle(Root));
+  Root->addChild(createSmallTriangle2(Root));
+  Root->addChild(createMediumTriangle(Root));
+  Root->addChild(createLargeTriangle(Root));
+  Root->addChild(createLargeTriangle2(Root));
+  Root->addChild(createSquare(Root));
+  Root->addChild(createParallelogram(Root));
   Scene->setRoot(Root);
+}
+
+const float horizontalOffset = (glm::sqrt(0.5) / 2) * 5;
+const float downVerticalOffset = 0.25f;
+
+TangramPiece * MyApp::createSmallTriangle(TangramPiece * root) {
+  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
+  glm::mat4 rotation = glm::rotate(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, 0.5f));
+  glm::mat4 transformation = translation * rotation * scale;
+  TangramPiece *TriangleSmall = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId);
+  return TriangleSmall;
+}
+
+TangramPiece * MyApp::createSmallTriangle2(TangramPiece * root) {
+  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
+  glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, -0.5f));
+  glm::mat4 transformation = translation  * scale;
+  TangramPiece *TriangleSmall2 = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), ColorId);
+  return TriangleSmall2;
+}
+
+TangramPiece * MyApp::createMediumTriangle(TangramPiece * root) {
+  glm::mat4 scale = glm::scale(glm::vec3(glm::sqrt(2) * 0.5, 1.0f, glm::sqrt(2) * 0.5));
+  glm::mat4 translation = glm::translate(glm::vec3(0.4f * 3.0f, 0.0f, (- downVerticalOffset + 1.0f)*3.0f));
+  glm::mat4 transformation = translation * scale;
+  TangramPiece *TriangleMedium = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), ColorId);
+  return TriangleMedium;
+}
+
+TangramPiece * MyApp::createLargeTriangle(TangramPiece * root) {
+  glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(1.6f, 0.0f, -2.5f));
+  glm::mat4 transformation = translation * rotation;
+  TangramPiece *TriangleLarge = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), ColorId);
+  return TriangleLarge;
+}
+
+TangramPiece * MyApp::createLargeTriangle2(TangramPiece * root) {
+  glm::mat4 rotation = glm::rotate(glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(-1.6f, 0.0f, -2.5f));
+  glm::mat4 transformation = translation * rotation;
+  TangramPiece *TriangleLarge2 = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), ColorId);
+  return TriangleLarge2;
+}
+
+TangramPiece * MyApp::createSquare(TangramPiece * root) {
+  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
+  glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(- horizontalOffset, 0.0f, 0.0f));
+  glm::mat4 transformation = translation * rotation * scale;
+  TangramPiece *Square = new TangramPiece(root, SquareMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), ColorId);
+  return Square;
+}
+
+TangramPiece * MyApp::createParallelogram(TangramPiece * root) {
+  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
+  glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(- horizontalOffset, 0.0f, (- downVerticalOffset + 1.0f)*3.0f));
+  glm::mat4 transformation = translation * rotation * scale;
+  TangramPiece *Parallelogram = new TangramPiece(root, ParallelogramMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), ColorId);
+  return Parallelogram;
 }
 
 ///////////////////////////////////////////////////////////////////////// CAMERA
