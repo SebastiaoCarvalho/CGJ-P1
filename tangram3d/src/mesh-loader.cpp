@@ -16,68 +16,7 @@
 #include <iostream>
 
 #include "../mgl/mgl.hpp"
-
-////////////////////////////////////////////////////////////////////////// TANGRAM
-class TangramPiece;
-
-class Tangram : public mgl::SceneGraph {
-  public:
-    void changeToBox(double deltaTime);
-    void changeToTangram(double deltaTime);
-    TangramPiece *getRoot() { return (TangramPiece *)SceneGraph::getRoot(); }
-};
-
-////////////////////////////////////////////////////////////////////////// Tangram Pieces
-class TangramPiece : public mgl::SceneNode {
-  private:
-    glm::vec4 Color;
-    GLuint ColorId;
-  public:
-    TangramPiece(
-      SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram, const glm::mat4 &modelmatrix, 
-      GLuint modelmatrixid, glm::vec4 color, GLuint colorId
-      );
-    virtual ~TangramPiece();
-    void drawSelf() override;
-    void changeToBox(double deltaTime);
-    void changeToTangram(double deltaTime);
-};
-
-////////////////////////////////////////////////////////////////////////// TANGRAM AND PIECES IMPLEMENTATION
-
-void Tangram::changeToBox(double deltaTime) {
-  getRoot()->changeToBox(deltaTime);
-}
-
-void Tangram::changeToTangram(double deltaTime) {
-  getRoot()->changeToTangram(deltaTime);
-}
-
-TangramPiece::TangramPiece(
-  SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram, const glm::mat4 &modelmatrix, 
-      GLuint modelmatrixid, glm::vec4 color, GLuint colorId
-  ) : SceneNode(parent, mesh, shaderprogram, modelmatrix, modelmatrixid) {
-  Color = color;
-  ColorId = colorId;
-}
-
-TangramPiece::~TangramPiece() {}
-
-void TangramPiece::drawSelf() {
-  Shaders->bind();
-  glUniformMatrix4fv(ModelMatrixId, 1, GL_FALSE, glm::value_ptr(ModelMatrix));
-  glUniform4fv(ColorId, 1, glm::value_ptr(Color));
-  Mesh->draw();
-  Shaders->unbind();
-}
-
-void TangramPiece::changeToBox(double deltaTime) {
-  std::cout << "Boxing" << std::endl;
-}
-
-void TangramPiece::changeToTangram(double deltaTime) {
-  std::cout << "Tangramming" << std::endl;
-}
+#include "./tangram.hpp"
 
 ////////////////////////////////////////////////////////////////////////// MYAPP
 
@@ -131,7 +70,7 @@ class MyApp : public mgl::App {
 ///////////////////////////////////////////////////////////////////////// MESHES
 
 void MyApp::createMeshes() {
-  std::string mesh_dir = "../../assets/models/";
+  std::string mesh_dir = "../assets/models/";
 
   std::string triangle_file = "triangle.obj";
   std::string triangle_fullname = mesh_dir + triangle_file;
@@ -189,8 +128,11 @@ void MyApp::createShaderPrograms() {
 ///////////////////////////////////////////////////////////////////////// SCENE GRAPH
 void MyApp::createSceneGraph() {
   Scene = new Tangram();
-  glm::mat4 ModelMatrix(1.0f);
-  TangramPiece *Root = new TangramPiece(nullptr, nullptr, Shaders, ModelMatrix, ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId);
+  TangramPiece *Root = new TangramPiece(
+    nullptr, nullptr, Shaders, glm::mat4(1.0f), 
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId
+  );
   Root->addChild(createSmallTriangle(Root));
   Root->addChild(createSmallTriangle2(Root));
   Root->addChild(createMediumTriangle(Root));
@@ -215,7 +157,11 @@ TangramPiece * MyApp::createSmallTriangle(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(smallSizeHorizontalOffset, 0.0f, scaleSize * pieceSize / 4));
   glm::mat4 transformation = translation * rotation * scale;
-  TangramPiece *TriangleSmall = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId);
+  TangramPiece *TriangleSmall = new TangramPiece(
+    root, TriangleMesh, Shaders, transformation, 
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId
+  );
   return TriangleSmall;
 }
 
@@ -223,7 +169,11 @@ TangramPiece * MyApp::createSmallTriangle2(TangramPiece * root) {
   glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
   glm::mat4 translation = glm::translate(glm::vec3(smallSizeHorizontalOffset, 0.0f, - scaleSize * pieceSize / 4));
   glm::mat4 transformation = translation  * scale;
-  TangramPiece *TriangleSmall2 = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), ColorId);
+  TangramPiece *TriangleSmall2 = new TangramPiece(
+    root, TriangleMesh, Shaders, transformation, 
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), ColorId
+  );
   return TriangleSmall2;
 }
 
@@ -232,7 +182,11 @@ TangramPiece * MyApp::createMediumTriangle(TangramPiece * root) {
   glm::mat4 scale = glm::scale(glm::vec3(glm::sqrt(2) * 0.5, 1.0f, glm::sqrt(2) * 0.5));
   glm::mat4 translation = glm::translate(glm::vec3(mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
   glm::mat4 transformation = translation * scale;
-  TangramPiece *TriangleMedium = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), ColorId);
+  TangramPiece *TriangleMedium = new TangramPiece(
+    root, TriangleMesh, Shaders, transformation, 
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), ColorId
+  );
   return TriangleMedium;
 }
 
@@ -240,7 +194,11 @@ TangramPiece * MyApp::createLargeTriangle(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
   glm::mat4 transformation = translation * rotation;
-  TangramPiece *TriangleLarge = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), ColorId);
+  TangramPiece *TriangleLarge = new TangramPiece(
+    root, TriangleMesh, Shaders, transformation, 
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), ColorId
+  );
   return TriangleLarge;
 }
 
@@ -248,7 +206,11 @@ TangramPiece * MyApp::createLargeTriangle2(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(- triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
   glm::mat4 transformation = translation * rotation;
-  TangramPiece *TriangleLarge2 = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), ColorId);
+  TangramPiece *TriangleLarge2 = new TangramPiece(
+    root, TriangleMesh, Shaders, transformation,
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), ColorId
+  );
   return TriangleLarge2;
 }
 
@@ -257,7 +219,11 @@ TangramPiece * MyApp::createSquare(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(- smallSizeHorizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation * scale;
-  TangramPiece *Square = new TangramPiece(root, SquareMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), ColorId);
+  TangramPiece *Square = new TangramPiece(
+    root, SquareMesh, Shaders, transformation, 
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), ColorId
+  );
   return Square;
 }
 
@@ -266,7 +232,11 @@ TangramPiece * MyApp::createParallelogram(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(- mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
   glm::mat4 transformation =  translation * rotation * scale;
-  TangramPiece *Parallelogram = new TangramPiece(root, ParallelogramMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), ColorId);
+  TangramPiece *Parallelogram = new TangramPiece(
+    root, ParallelogramMesh, Shaders, transformation,
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    ModelMatrixId, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), ColorId
+  );
   return Parallelogram;
 }
 

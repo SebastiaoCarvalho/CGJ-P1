@@ -5,7 +5,10 @@ cmake_minimum_required(VERSION 3.10)
 project(mesh-loader LANGUAGES CXX)
 
 # Source files
-set(SRC_SOURCES mesh-loader.cpp)
+set(SRC_SOURCES 
+    mesh-loader.cpp
+    tangram.cpp
+)
 
 # GLSL shader files
 set(SHADER_FILES cube-fs.glsl cube-vs.glsl)

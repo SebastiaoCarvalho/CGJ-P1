@@ -21,10 +21,10 @@ release : $(OUT)
 debug : CXXFLAGS := -g -Wall -D DEBUG
 debug : $(OUT)
 
-$(OUT) : $(OUT).o $(ENGINEDIR)/lib$(ENGINE).so
+$(OUT) : $(OUT).o tangram.o $(ENGINEDIR)/lib$(ENGINE).so
 	$(CXX) $(LIBS) -o $@ $<
 
-$(OUT).o : $(OUT).cpp $(ENGINEDIR)/$(ENGINE).hpp
+$*.o : $(OUT).cpp $(ENGINEDIR)/$(ENGINE).hpp
 	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $<
 
 clean :
