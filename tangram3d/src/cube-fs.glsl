@@ -33,9 +33,9 @@ void main(void)
 {
     vec3 color;
     // color = constantColor();
-    // color = positionColor();
+     color = positionColor();
     // color = uvColor();
-    color = normalColor();
+    //color = normalColor();
     // color = diffuseColor();
     FragmentColor = vec4(color, 1.0);
 }

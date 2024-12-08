@@ -201,29 +201,36 @@ void MyApp::createSceneGraph() {
   Scene->setRoot(Root);
 }
 
-const float horizontalOffset = (glm::sqrt(0.5) / 2) * 5;
-const float downVerticalOffset = 0.25f;
+const float pieceSize = 5.0f;
+const float scaleSize = 0.5f;
+const float triangleCathetus = glm::sqrt(pieceSize * pieceSize / 2);
+const float smallSizeHorizontalOffset = (pieceSize / 2) * scaleSize;
+const float rSquare = sqrt(2) * smallSizeHorizontalOffset;
+const float mediumSizeHorizontalOffset = smallSizeHorizontalOffset * glm::sqrt(1.0f/2.0f);
+
+const float downVerticalOffset = smallSizeHorizontalOffset * glm::sqrt(2);
 
 TangramPiece * MyApp::createSmallTriangle(TangramPiece * root) {
-  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
+  glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
   glm::mat4 rotation = glm::rotate(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, 0.5f));
+  glm::mat4 translation = glm::translate(glm::vec3(smallSizeHorizontalOffset, 0.0f, scaleSize * pieceSize / 4));
   glm::mat4 transformation = translation * rotation * scale;
   TangramPiece *TriangleSmall = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId);
   return TriangleSmall;
 }
 
 TangramPiece * MyApp::createSmallTriangle2(TangramPiece * root) {
-  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
-  glm::mat4 translation = glm::translate(glm::vec3(horizontalOffset, 0.0f, -0.5f));
+  glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
+  glm::mat4 translation = glm::translate(glm::vec3(smallSizeHorizontalOffset, 0.0f, - scaleSize * pieceSize / 4));
   glm::mat4 transformation = translation  * scale;
   TangramPiece *TriangleSmall2 = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), ColorId);
   return TriangleSmall2;
 }
 
 TangramPiece * MyApp::createMediumTriangle(TangramPiece * root) {
+  std::cout << "mediumSizeHorizontalOffset: " << mediumSizeHorizontalOffset << std::endl;
   glm::mat4 scale = glm::scale(glm::vec3(glm::sqrt(2) * 0.5, 1.0f, glm::sqrt(2) * 0.5));
-  glm::mat4 translation = glm::translate(glm::vec3(0.4f * 3.0f, 0.0f, (- downVerticalOffset + 1.0f)*3.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
   glm::mat4 transformation = translation * scale;
   TangramPiece *TriangleMedium = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), ColorId);
   return TriangleMedium;
@@ -231,7 +238,7 @@ TangramPiece * MyApp::createMediumTriangle(TangramPiece * root) {
 
 TangramPiece * MyApp::createLargeTriangle(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(1.6f, 0.0f, -2.5f));
+  glm::mat4 translation = glm::translate(glm::vec3(triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
   glm::mat4 transformation = translation * rotation;
   TangramPiece *TriangleLarge = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), ColorId);
   return TriangleLarge;
@@ -239,26 +246,26 @@ TangramPiece * MyApp::createLargeTriangle(TangramPiece * root) {
 
 TangramPiece * MyApp::createLargeTriangle2(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(-1.6f, 0.0f, -2.5f));
+  glm::mat4 translation = glm::translate(glm::vec3(- triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
   glm::mat4 transformation = translation * rotation;
   TangramPiece *TriangleLarge2 = new TangramPiece(root, TriangleMesh, Shaders, transformation, ModelMatrixId, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), ColorId);
   return TriangleLarge2;
 }
 
 TangramPiece * MyApp::createSquare(TangramPiece * root) {
-  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
+  glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(- horizontalOffset, 0.0f, 0.0f));
+  glm::mat4 translation = glm::translate(glm::vec3(- smallSizeHorizontalOffset, 0.0f, 0.0f));
   glm::mat4 transformation = translation * rotation * scale;
   TangramPiece *Square = new TangramPiece(root, SquareMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), ColorId);
   return Square;
 }
 
 TangramPiece * MyApp::createParallelogram(TangramPiece * root) {
-  glm::mat4 scale = glm::scale(glm::vec3(0.5f, 1.0f, 0.5f));
+  glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(- horizontalOffset, 0.0f, (- downVerticalOffset + 1.0f)*3.0f));
-  glm::mat4 transformation = translation * rotation * scale;
+  glm::mat4 translation = glm::translate(glm::vec3(- mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
+  glm::mat4 transformation =  translation * rotation * scale;
   TangramPiece *Parallelogram = new TangramPiece(root, ParallelogramMesh, Shaders, transformation, ModelMatrixId, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), ColorId);
   return Parallelogram;
 }
