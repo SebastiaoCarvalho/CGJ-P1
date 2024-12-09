@@ -65,5 +65,5 @@ void TangramPiece::update(double deltaTime) {
   //std::cout << "translationVector: " << translationVector.x << " " << translationVector.y << " " << translationVector.z << std::endl;
   glm::quat rotationQuaternion = glm::mix(TangramModelRotation, BoxModelRotation, lerpValue);
   glm::quat axisRotationQuaternion = glm::slerp(TangramModelAxisRotation, BoxModelAxisRotation, lerpValue);
-  ModelMatrix = /*glm::mat4(axisRotationQuaternion) **/ /*glm::translate(translationVector) * */ TangramModelMatrix  * glm::mat4(rotationQuaternion) ;
+  ModelMatrix = /*glm::mat4(axisRotationQuaternion) **/ glm::translate(translationVector) * TangramModelMatrix  * glm::mat4(rotationQuaternion) ;
 }
