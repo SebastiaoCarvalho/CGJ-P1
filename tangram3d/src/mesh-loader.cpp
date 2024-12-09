@@ -153,14 +153,18 @@ const float downVerticalOffset = smallSizeHorizontalOffset * glm::sqrt(2);
 const glm::quat axisRotation = glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
 TangramPiece * MyApp::createSmallTriangle(TangramPiece * root) {
+  // Model Matrix
   glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
   glm::mat4 rotation = glm::rotate(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(smallSizeHorizontalOffset, 0.0f, scaleSize * pieceSize / 4));
+  glm::vec3 translationVector = glm::vec3(smallSizeHorizontalOffset, 0.0f, scaleSize * pieceSize / 4);
+  glm::mat4 translation = glm::translate(translationVector);
   glm::mat4 transformation = translation * rotation * scale;
+  // Animation variables
   glm::quat boxRotation = glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::vec3 boxTranslation = glm::vec3(-smallSizeHorizontalOffset /2, 0.0f, 0.0f) - translationVector;
   TangramPiece *TriangleSmall = new TangramPiece(
     root, TriangleMesh, Shaders, transformation, 
-    glm::vec3(0.0f), boxRotation, axisRotation,
+    boxTranslation, boxRotation, axisRotation,
     ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId
   );
   return TriangleSmall;
@@ -184,11 +188,12 @@ TangramPiece * MyApp::createSmallTriangle2(TangramPiece * root) {
 TangramPiece * MyApp::createMediumTriangle(TangramPiece * root) {
   // Model Matrix
   glm::mat4 scale = glm::scale(glm::vec3(glm::sqrt(2) * 0.5, 1.0f, glm::sqrt(2) * 0.5));
-  glm::mat4 translation = glm::translate(glm::vec3(mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
+  glm::vec3 translationVector = glm::vec3(mediumSizeHorizontalOffset, 0.0f, downVerticalOffset);
+  glm::mat4 translation = glm::translate(translationVector);
   glm::mat4 transformation = translation * scale;
   // Animation variables
   glm::quat boxRotation = glm::angleAxis(glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::vec3 boxTranslation = glm::vec3(-mediumSizeHorizontalOffset * 4, 0.0f, 0.0f);
+  glm::vec3 boxTranslation = glm::vec3(- smallSizeHorizontalOffset * (3.0f/2.0f), 0.0f, smallSizeHorizontalOffset * (3.0f/2.0f)) - translationVector;
   TangramPiece *TriangleMedium = new TangramPiece(
     root, TriangleMesh, Shaders, transformation,
     boxTranslation, boxRotation, axisRotation,
@@ -200,11 +205,12 @@ TangramPiece * MyApp::createMediumTriangle(TangramPiece * root) {
 TangramPiece * MyApp::createLargeTriangle(TangramPiece * root) {
   // Model Matrix
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
+  glm::vec3 translationVector = glm::vec3(triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f));
+  glm::mat4 translation = glm::translate(translationVector);
   glm::mat4 transformation = translation * rotation;
   // Animation variables
   glm::quat boxRotation = glm::angleAxis(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::vec3 boxTranslation = glm::vec3(mediumSizeHorizontalOffset, 0.0f, downVerticalOffset);
+  glm::vec3 boxTranslation = glm::vec3(pieceSize/4, 0.0f, 0.0f) - translationVector;
   TangramPiece *TriangleLarge = new TangramPiece(
     root, TriangleMesh, Shaders, transformation, 
     boxTranslation,  boxRotation, axisRotation,
@@ -216,11 +222,12 @@ TangramPiece * MyApp::createLargeTriangle(TangramPiece * root) {
 TangramPiece * MyApp::createLargeTriangle2(TangramPiece * root) {
   // Model Matrix
   glm::mat4 rotation = glm::rotate(glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(- triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
+  glm::vec3 translationVector = glm::vec3(- triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f));
+  glm::mat4 translation = glm::translate(translationVector);
   glm::mat4 transformation = translation * rotation;
   // Animation variables
   glm::quat boxRotation = glm::angleAxis(glm::radians(-135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::vec3 boxTranslation = glm::vec3(mediumSizeHorizontalOffset, 0.0f, 0.0f);
+  glm::vec3 boxTranslation = glm::vec3(0.0f, 0.0f, - pieceSize/4) - translationVector;
   TangramPiece *TriangleLarge2 = new TangramPiece(
     root, TriangleMesh, Shaders, transformation,
     boxTranslation, boxRotation, axisRotation,
@@ -249,13 +256,14 @@ TangramPiece * MyApp::createParallelogram(TangramPiece * root) {
   // Model Matrix
   glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 translation = glm::translate(glm::vec3(- mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
+  glm::vec3 translationVector = glm::vec3(- mediumSizeHorizontalOffset, 0.0f, downVerticalOffset);
+  glm::mat4 translation = glm::translate(translationVector);
   glm::mat4 transformation =  translation * rotation * scale;
   // Animation variables
   glm::quat zRotation = glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glm::quat yRotation = glm::angleAxis(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::quat boxRotation = yRotation * zRotation;
-  glm::vec3 boxTranslation = glm::vec3(-(pieceSize/2) +(smallSizeHorizontalOffset), 0.0f, - downVerticalOffset);
+  glm::vec3 boxTranslation = glm::vec3(- (smallSizeHorizontalOffset * 3.0f / 2.0f), 0.0f, - smallSizeHorizontalOffset * (1.0f/2.0f)) - translationVector;
   TangramPiece *Parallelogram = new TangramPiece(
     root, ParallelogramMesh, Shaders, transformation,
     boxTranslation, boxRotation,  axisRotation,
