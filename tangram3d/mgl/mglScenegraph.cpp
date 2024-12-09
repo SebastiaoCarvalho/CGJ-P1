@@ -60,4 +60,10 @@ namespace mgl {
         Mesh->draw();
         Shaders->unbind();
     }
+
+    /* void SceneNode::update(double deltaTime) { FIXME
+        for (auto &child : Children) {
+            child->update(deltaTime);
+        }
+    } */
 }

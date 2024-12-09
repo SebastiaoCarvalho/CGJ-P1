@@ -130,7 +130,7 @@ void MyApp::createSceneGraph() {
   Scene = new Tangram();
   TangramPiece *Root = new TangramPiece(
     nullptr, nullptr, Shaders, glm::mat4(1.0f), 
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
     ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId
   );
   Root->addChild(createSmallTriangle(Root));
@@ -152,14 +152,17 @@ const float mediumSizeHorizontalOffset = smallSizeHorizontalOffset * glm::sqrt(1
 
 const float downVerticalOffset = smallSizeHorizontalOffset * glm::sqrt(2);
 
+const glm::quat axisRotation = glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+
 TangramPiece * MyApp::createSmallTriangle(TangramPiece * root) {
   glm::mat4 scale = glm::scale(glm::vec3(scaleSize, 1.0f, scaleSize));
   glm::mat4 rotation = glm::rotate(glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(smallSizeHorizontalOffset, 0.0f, scaleSize * pieceSize / 4));
   glm::mat4 transformation = translation * rotation * scale;
+  glm::quat boxRotation = glm::angleAxis(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   TangramPiece *TriangleSmall = new TangramPiece(
     root, TriangleMesh, Shaders, transformation, 
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f), boxRotation, axisRotation,
     ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId
   );
   return TriangleSmall;
@@ -171,20 +174,20 @@ TangramPiece * MyApp::createSmallTriangle2(TangramPiece * root) {
   glm::mat4 transformation = translation  * scale;
   TangramPiece *TriangleSmall2 = new TangramPiece(
     root, TriangleMesh, Shaders, transformation, 
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)), axisRotation,
     ModelMatrixId, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f), ColorId
   );
   return TriangleSmall2;
 }
 
 TangramPiece * MyApp::createMediumTriangle(TangramPiece * root) {
-  std::cout << "mediumSizeHorizontalOffset: " << mediumSizeHorizontalOffset << std::endl;
   glm::mat4 scale = glm::scale(glm::vec3(glm::sqrt(2) * 0.5, 1.0f, glm::sqrt(2) * 0.5));
   glm::mat4 translation = glm::translate(glm::vec3(mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
   glm::mat4 transformation = translation * scale;
+  glm::quat boxRotation = glm::angleAxis(glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   TangramPiece *TriangleMedium = new TangramPiece(
     root, TriangleMesh, Shaders, transformation, 
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f), boxRotation, axisRotation,
     ModelMatrixId, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), ColorId
   );
   return TriangleMedium;
@@ -194,9 +197,10 @@ TangramPiece * MyApp::createLargeTriangle(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
   glm::mat4 transformation = translation * rotation;
+  glm::quat boxRotation = glm::angleAxis(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   TangramPiece *TriangleLarge = new TangramPiece(
     root, TriangleMesh, Shaders, transformation, 
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f),  boxRotation, axisRotation,
     ModelMatrixId, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), ColorId
   );
   return TriangleLarge;
@@ -206,9 +210,10 @@ TangramPiece * MyApp::createLargeTriangle2(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(- triangleCathetus * (1.0f/4.0f), 0.0f, -triangleCathetus * (3.0f/4.0f)));
   glm::mat4 transformation = translation * rotation;
+  glm::quat boxRotation = glm::angleAxis(glm::radians(-135.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   TangramPiece *TriangleLarge2 = new TangramPiece(
     root, TriangleMesh, Shaders, transformation,
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f), boxRotation, axisRotation,
     ModelMatrixId, glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), ColorId
   );
   return TriangleLarge2;
@@ -221,7 +226,7 @@ TangramPiece * MyApp::createSquare(TangramPiece * root) {
   glm::mat4 transformation = translation * rotation * scale;
   TangramPiece *Square = new TangramPiece(
     root, SquareMesh, Shaders, transformation, 
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)), axisRotation,
     ModelMatrixId, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f), ColorId
   );
   return Square;
@@ -232,9 +237,12 @@ TangramPiece * MyApp::createParallelogram(TangramPiece * root) {
   glm::mat4 rotation = glm::rotate(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 translation = glm::translate(glm::vec3(- mediumSizeHorizontalOffset, 0.0f, downVerticalOffset));
   glm::mat4 transformation =  translation * rotation * scale;
+  glm::quat zRotation = glm::angleAxis(glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+  glm::quat yRotation = glm::angleAxis(glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::quat boxRotation = yRotation * zRotation;
   TangramPiece *Parallelogram = new TangramPiece(
     root, ParallelogramMesh, Shaders, transformation,
-    glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
+    glm::vec3(0.0f), boxRotation,  axisRotation,
     ModelMatrixId, glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), ColorId
   );
   return Parallelogram;
@@ -265,10 +273,10 @@ float ratio = 640.0f / 480.0f;
 
 void MyApp::createCamera() {
   Camera1 = new mgl::OrbitalCamera(
-    UBO_BP, true, eyeFrontal, center, upFrontal, left, right, bottom, top, near, far, fovy, ratio
+    UBO_BP, true, eyeDownward, center, upDownward, left, right, bottom, top, near, far, fovy, ratio
   );
   Camera2 = new mgl::OrbitalCamera(
-    UBO_BP, false, eyeDownward, center, upDownward, left, right, bottom, top, near, far, fovy, ratio
+    UBO_BP, false, eyeFrontal, center, upFrontal, left, right, bottom, top, near, far, fovy, ratio
   );
   CurrentCamera = Camera1;
   CurrentCamera->setViewMatrix();
@@ -317,6 +325,7 @@ void MyApp::animate(double elapsed) {
   if (KeyManager->isPressed(GLFW_KEY_RIGHT)) {
     Scene->changeToTangram(elapsed);
   }
+  Scene->getRoot()->update(elapsed);
 }
 
 void MyApp::mouseButtonCallback(GLFWwindow *win, int button, int action, int mods) {

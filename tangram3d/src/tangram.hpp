@@ -3,7 +3,6 @@
 
 #include "../mgl/mgl.hpp"
 
-
 ////////////////////////////////////////////////////////////////////////// TANGRAM
 class TangramPiece;
 
@@ -30,11 +29,14 @@ class TangramPiece : public mgl::SceneNode {
     glm::quat BoxModelRotation;
     glm::quat TangramModelRotation;
 
+    glm::quat BoxModelAxisRotation;
+    glm::quat TangramModelAxisRotation;
+
   public:
     TangramPiece(
       SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram,
       const glm::mat4 &modelMatrix, const glm::vec3 &translation, const glm::quat &rotation,
-      GLuint modelmatrixid, glm::vec4 color, GLuint colorId
+      const glm::quat &axisRotation, GLuint modelmatrixid, glm::vec4 color, GLuint colorId
       );
     virtual ~TangramPiece();
     void drawSelf() override;
