@@ -12,7 +12,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
-
 #include <iostream>
 
 #include "../mgl/mgl.hpp"
@@ -395,15 +394,6 @@ void MyApp::keyCallback(GLFWwindow *win, int key, int scancode, int action, int 
         CurrentCamera->switchProjection();
       }
       return;
-  }
-}
-
-void MyApp::printMatrix(const glm::mat4 &matrix) {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      std::cout << matrix[i][j] << " ";
-    }
-    std::cout << std::endl;
   }
 }
 
