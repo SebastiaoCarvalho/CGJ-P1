@@ -48,7 +48,7 @@ class SceneNode : public IDrawable {
     SceneNode(SceneNode * parent, mgl::Mesh * mesh, mgl::ShaderProgram * shaderprogram, const glm::mat4 &modelmatrix, GLuint modelmatrixid);
     virtual ~SceneNode();
     void draw();
-    //virtual void update(double deltaTime);
+    virtual void update(double deltaTime);
     virtual void drawSelf();
     void addChild(SceneNode *child);
     void setMesh(mgl::Mesh *mesh);

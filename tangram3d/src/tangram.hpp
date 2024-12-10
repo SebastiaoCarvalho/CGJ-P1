@@ -39,10 +39,10 @@ class TangramPiece : public mgl::SceneNode {
       const glm::quat &axisRotation, GLuint modelmatrixid, glm::vec4 color, GLuint colorId
       );
     virtual ~TangramPiece();
-    void drawSelf() override;
+    virtual void drawSelf() override;
     void changeToBox(double deltaTime);
     void changeToTangram(double deltaTime);
-    void update(double deltaTime);
+    virtual void update(double deltaTime) override;
 };
 
 #endif // TANGRAM_HPP

@@ -61,9 +61,9 @@ namespace mgl {
         Shaders->unbind();
     }
 
-    /* void SceneNode::update(double deltaTime) { FIXME
+    void SceneNode::update(double deltaTime) {
         for (auto &child : Children) {
             child->update(deltaTime);
         }
-    } */
+    }
 }

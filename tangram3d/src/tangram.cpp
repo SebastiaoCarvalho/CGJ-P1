@@ -1,7 +1,6 @@
 #include "tangram.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
-#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////// TANGRAM
 
@@ -59,10 +58,9 @@ void TangramPiece::changeToTangram(double deltaTime) {
 
 void TangramPiece::update(double deltaTime) {
   for (auto &child : Children) {
-    ((TangramPiece * )child)->update(deltaTime);
+    child->update(deltaTime);
   }
   glm::vec3 translationVector = glm::mix(TangramModelTranslation, BoxModelTranslation, lerpValue);
-  //std::cout << "translationVector: " << translationVector.x << " " << translationVector.y << " " << translationVector.z << std::endl;
   glm::quat rotationQuaternion = glm::mix(TangramModelRotation, BoxModelRotation, lerpValue);
   glm::quat axisRotationQuaternion = glm::slerp(TangramModelAxisRotation, BoxModelAxisRotation, lerpValue);
   ModelMatrix = glm::mat4(axisRotationQuaternion) * glm::translate(translationVector) * TangramModelMatrix  * glm::mat4(rotationQuaternion) ;
