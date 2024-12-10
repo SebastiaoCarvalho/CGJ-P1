@@ -7,8 +7,11 @@ in vec3 inNormal;
 out vec3 exPosition;
 out vec2 exTexcoord;
 out vec3 exNormal;
+out vec4 exColor;
 
 uniform mat4 ModelMatrix;
+
+uniform vec4 Color;
 
 uniform Camera {
    mat4 ViewMatrix;
@@ -20,6 +23,7 @@ void main(void)
 	exPosition = inPosition;
 	exTexcoord = inTexcoord;
 	exNormal = inNormal;
+	exColor = Color;
 
 	vec4 MCPosition = vec4(inPosition, 1.0);
 	gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * MCPosition;

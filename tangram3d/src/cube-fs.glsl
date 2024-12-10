@@ -3,6 +3,7 @@
 in vec3 exPosition;
 in vec2 exTexcoord;
 in vec3 exNormal;
+in vec4 exColor;
 
 out vec4 FragmentColor;
 
@@ -29,13 +30,15 @@ vec3 diffuseColor(void) {
     return vec3(intensity);
 }
 
+vec3 normalTint(void) {
+    vec3 N  = fract(exNormal * .1031);
+    N += dot(N, N.yzx + 33.33);
+    return mix(0.2,1.0,fract((N.x + N.y) * N.z)) * exColor.xyz;
+} 
+
 void main(void)
 {
     vec3 color;
-    // color = constantColor();
-     color = positionColor();
-    // color = uvColor();
-    //color = normalColor();
-    // color = diffuseColor();
+    color = normalTint();
     FragmentColor = vec4(color, 1.0);
 }
