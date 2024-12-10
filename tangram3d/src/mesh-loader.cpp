@@ -128,7 +128,7 @@ void MyApp::createShaderPrograms() {
 void MyApp::createSceneGraph() {
   Scene = new Tangram();
   TangramPiece *Root = new TangramPiece(
-    nullptr, nullptr, Shaders, glm::translate(glm::vec3(1.0f, 0.0f, 0.0f)),
+    nullptr, nullptr, Shaders, glm::mat4(1.0f),
     glm::vec3(0.0f), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)), glm::angleAxis(0.0f, glm::vec3(0.0f, 0.0f, 1.0f)),
     ModelMatrixId, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), ColorId
   );

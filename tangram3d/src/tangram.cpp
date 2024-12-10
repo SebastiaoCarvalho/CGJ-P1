@@ -62,8 +62,8 @@ void TangramPiece::update(double deltaTime) {
   glm::quat axisRotationQuaternion = glm::slerp(TangramModelAxisRotation, BoxModelAxisRotation, lerpValue);
   glm::mat4 parentModelMatrix = Parent ? ((TangramPiece *)Parent)->TangramModelMatrix : glm::mat4(1.0f);
 
-  ModelMatrix = glm::mat4(axisRotationQuaternion) * glm::translate(translationVector) * parentModelMatrix
-    * TangramModelMatrix * glm::mat4(rotationQuaternion) ;
+  ModelMatrix =  parentModelMatrix * glm::mat4(axisRotationQuaternion) * glm::translate(translationVector)
+    * TangramModelMatrix * glm::mat4(rotationQuaternion);
   for (auto &child : Children) {
     child->update(deltaTime);
   }
