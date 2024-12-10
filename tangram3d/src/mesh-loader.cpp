@@ -53,7 +53,7 @@ class MyApp : public mgl::App {
   void createMeshes();
   void createManagers();
   void createShaderPrograms();
-  void createCamera();
+  void createCameras();
   void drawScene();
   void switchCamera();
 
@@ -279,22 +279,22 @@ glm::vec3 upFrontal = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // Second Camera position and up vector
 glm::vec3 eyeDownward = glm::vec3(0.0f, 5.0f, 0.0f);
-glm::vec3 upDownward = glm::vec3(0.0f, 0.0f, 1.0f);
+glm::vec3 upDownward = glm::vec3(0.0f, 0.0f, -1.0f);
 
 // Center of the scene
 glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
 
 // Projection settings
-float left = -2.0f;
-float right = 2.0f;
-float bottom = -2.0f;
-float top = 2.0f;
+float left = -4.0f;
+float right = 4.0f;
+float bottom = -4.0f;
+float top = 4.0f;
 float near = 1.0f;
 float far = 10.0f;
-float fovy = 30.0f;
+float fovy = glm::radians(90.0f);
 float ratio = 640.0f / 480.0f;
 
-void MyApp::createCamera() {
+void MyApp::createCameras() {
   Camera1 = new mgl::OrbitalCamera(
     UBO_BP, true, eyeDownward, center, upDownward, left, right, bottom, top, near, far, fovy, ratio
   );
@@ -325,7 +325,7 @@ void MyApp::drawScene() {
 void MyApp::initCallback(GLFWwindow *win) {
   createMeshes();
   createShaderPrograms();  // after mesh;
-  createCamera();
+  createCameras();
   createSceneGraph();
   createManagers();
 }
