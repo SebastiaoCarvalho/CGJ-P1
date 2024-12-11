@@ -22,7 +22,7 @@ namespace mgl {
             this->fovy = fovy;
             this->ratio = ratio;
             this->isOrthographic = false;
-            this->zoomValue = 0;
+            this->zoomValue = glm::length(eye - center);
             this->yaw = 0.0f;
             this->pitch = 0.0f;
             updateViewMatrix();
@@ -30,8 +30,8 @@ namespace mgl {
     }
 
     void OrbitalCamera::update(float deltaTime) {
-        applyRotate(deltaTime);
-        applyZoom(deltaTime);
+        //applyRotate(deltaTime);
+        applyZoomAndRotation(deltaTime);
         updateViewMatrix();
         refresh();
     }
@@ -42,24 +42,34 @@ namespace mgl {
     }
 
     void OrbitalCamera::zoom(double yoffset) {
-        zoomValue = yoffset ;
+        zoomValue += yoffset * 0.1f;
     }
 
-    void OrbitalCamera::applyZoom(double deltaTime) {
-        if (!zoomValue) return;
-        float ammount = float(deltaTime) * 5.0f;
-        std::cout << "eye : " <<  eye[0] << " " << eye[1] << " " << eye[2] << std::endl;
+    void OrbitalCamera::applyZoomAndRotation(double deltaTime) {
+        double ammount = deltaTime * 10;
         glm::vec3 view = glm::normalize(center - eye);
-        view = glm::abs(view);
-        glm::vec3 scaleVector = view * (float)zoomValue * ammount;
-        //std::cout << "translation : " << translation[0] << " " << translation[1] << " " << translation[2] << std::endl;
-        eye = glm::translate(eye) *  glm::scale(scaleVector) * glm::vec4(view, 1.0f); 
-        if (std::abs(zoomValue) < deltaTime) {
+        glm::vec3 side = glm::normalize(glm::cross(view, up));
+        up = glm::normalize(glm::cross(side, view));
+
+        // Camera rotation
+        glm::quat qYaw = glm::angleAxis((float)(yaw * ammount), up);
+        glm::quat qPitch = glm::angleAxis((float)(pitch * ammount), side);
+        //std::cout << pitch << std::endl;
+        glm::quat q = qPitch * qYaw;
+        glm::mat4 rotation = glm::toMat4(q);
+
+        // Camera zoom
+        eye = glm::translate(center) * glm::scale(glm::vec3(zoomValue)) * glm::mat4(rotation) * glm::vec4(view, 1.0f);
+
+
+        pitch = 0.0f;
+        yaw = 0.0f;
+        /* if (std::abs(zoomValue) < ammount) {
             zoomValue = 0.0f;
         }
         else {
             zoomValue += (zoomValue > 0) ? -ammount : ammount;
-        }
+        } */
     }
 
     void OrbitalCamera::applyRotate(double deltaTime) {
