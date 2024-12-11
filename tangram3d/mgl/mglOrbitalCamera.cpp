@@ -42,34 +42,47 @@ namespace mgl {
     }
 
     void OrbitalCamera::zoom(double yoffset) {
-        zoomValue += yoffset * 0.1f;
+        zoomValue = glm::max(float(zoomValue + yoffset * 0.1f), 1e-5f);
+
+    }
+
+void printMatrix(glm::mat4 matrix) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                printf("%f ", matrix[i][j]);
+            }
+            printf("\n");
+        }
+        printf("\n");
     }
 
     void OrbitalCamera::applyZoomAndRotation(double deltaTime) {
         double ammount = deltaTime * 10;
         glm::vec3 view = glm::normalize(center - eye);
-        glm::vec3 side = glm::normalize(glm::cross(view, up));
-        up = glm::normalize(glm::cross(side, view));
+        glm::vec3 side = glm::normalize(glm::cross(up, view));
 
-        // Camera rotation
+        // Compute camera rotation
         glm::quat qYaw = glm::angleAxis((float)(yaw * ammount), up);
         glm::quat qPitch = glm::angleAxis((float)(pitch * ammount), side);
         //std::cout << pitch << std::endl;
         glm::quat q = qPitch * qYaw;
         glm::mat4 rotation = glm::toMat4(q);
 
-        // Camera zoom
-        eye = glm::translate(center) * glm::scale(glm::vec3(zoomValue)) * glm::mat4(rotation) * glm::vec4(view, 1.0f);
+        // Update zoom and rotation
 
+        // zoomV > 0 && view < 0 => - view * zoomV
+        // zoomV > 0 && view > 0 => view * zoomV
+        // zoomV < 0 && view < 0 => 
+        // zoomV < 0 && view > 0 => - view * zoomV
+
+        std::cout << "eye " << eye[0] << " " << eye[1] << " " << eye[2] << std::endl;
+
+        eye = glm::translate(center) * glm::scale(glm::vec3(zoomValue)) * glm::mat4(rotation)  * -(glm::vec4(view, 1.0f));
+        std::cout << zoomValue << std::endl;
+        up = glm::normalize(glm::vec3(rotation * glm::vec4(up, 0.0f)));
 
         pitch = 0.0f;
         yaw = 0.0f;
-        /* if (std::abs(zoomValue) < ammount) {
-            zoomValue = 0.0f;
-        }
-        else {
-            zoomValue += (zoomValue > 0) ? -ammount : ammount;
-        } */
     }
 
     void OrbitalCamera::applyRotate(double deltaTime) {
