@@ -23,6 +23,7 @@ namespace mgl {
             this->ratio = ratio;
             this->isOrthographic = false;
             this->zoomValue = glm::length(eye - center);
+            this->zoomLeft = 0.0f;
             this->yaw = 0.0f;
             this->pitch = 0.0f;
             updateViewMatrix();
@@ -30,7 +31,6 @@ namespace mgl {
     }
 
     void OrbitalCamera::update(float deltaTime) {
-        //applyRotate(deltaTime);
         applyZoomAndRotation(deltaTime);
         updateViewMatrix();
         refresh();
@@ -42,8 +42,7 @@ namespace mgl {
     }
 
     void OrbitalCamera::zoom(double yoffset) {
-        zoomValue = glm::max(float(zoomValue + yoffset * 0.1f), 1e-5f);
-
+        zoomLeft += yoffset * 0.5;
     }
 
 void printMatrix(glm::mat4 matrix) {
@@ -58,50 +57,27 @@ void printMatrix(glm::mat4 matrix) {
 
     void OrbitalCamera::applyZoomAndRotation(double deltaTime) {
         double ammount = deltaTime * 10;
+        double zoomAmmount = zoomLeft * 0.2;
+        zoomLeft -= zoomAmmount;
+
         glm::vec3 view = glm::normalize(center - eye);
         glm::vec3 side = glm::normalize(glm::cross(up, view));
 
         // Compute camera rotation
         glm::quat qYaw = glm::angleAxis((float)(yaw * ammount), up);
         glm::quat qPitch = glm::angleAxis((float)(pitch * ammount), side);
-        //std::cout << pitch << std::endl;
         glm::quat q = qPitch * qYaw;
         glm::mat4 rotation = glm::toMat4(q);
 
         // Update zoom and rotation
 
-        // zoomV > 0 && view < 0 => - view * zoomV
-        // zoomV > 0 && view > 0 => view * zoomV
-        // zoomV < 0 && view < 0 => 
-        // zoomV < 0 && view > 0 => - view * zoomV
-
-        std::cout << "eye " << eye[0] << " " << eye[1] << " " << eye[2] << std::endl;
+        zoomValue = glm::max(float(zoomValue + zoomAmmount), 1e-5f);
 
         eye = glm::translate(center) * glm::scale(glm::vec3(zoomValue)) * glm::mat4(rotation)  * -(glm::vec4(view, 1.0f));
-        std::cout << zoomValue << std::endl;
         up = glm::normalize(glm::vec3(rotation * glm::vec4(up, 0.0f)));
 
         pitch = 0.0f;
         yaw = 0.0f;
-    }
-
-    void OrbitalCamera::applyRotate(double deltaTime) {
-        if (yaw == 0.0f && pitch == 0.0f) return;
-        double ammount = deltaTime * 10;
-        glm::vec3 view = glm::normalize(center - eye);
-        glm::vec3 side = glm::normalize(glm::cross(view, up));
-        up = glm::normalize(glm::cross(side, view));
-        glm::quat qYaw = glm::angleAxis((float)(yaw * ammount), up);
-        glm::quat qPitch = glm::angleAxis((float)(pitch * ammount), side);
-        //std::cout << pitch << std::endl;
-        glm::quat q = qPitch * qYaw;
-        glm::mat4 rotation = glm::toMat4(q);
-        eye = glm::vec3(rotation * glm::vec4(eye, 1.0f));
-        //std::cout << "eye: " << eye[0] << " " << eye[1] << " " << eye[2] << std::endl;
-        up = glm::normalize(glm::vec3(rotation * glm::vec4(up, 0.0f)));
-        //std::cout <<"up :" << up[0] << " " << up[1] << " " << up[2] << std::endl;
-        yaw = 0.0f;
-        pitch = 0.0f;
     }
 
     void OrbitalCamera::switchProjection() {
