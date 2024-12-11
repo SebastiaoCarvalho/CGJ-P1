@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set project name and version
-project(mesh-loader VERSION 1.0 LANGUAGES CXX)
+project(tangram3d VERSION 1.0 LANGUAGES CXX)
 
 # Set default build type to Release
 if(NOT CMAKE_BUILD_TYPE)

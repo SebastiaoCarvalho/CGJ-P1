@@ -1,12 +1,9 @@
 # src/CMakeLists.txt
 cmake_minimum_required(VERSION 3.10)
 
-# Create the executable
-project(mesh-loader LANGUAGES CXX)
-
 # Source files
 set(SRC_SOURCES 
-    mesh-loader.cpp
+    main.cpp
     tangram.cpp
 )
 
