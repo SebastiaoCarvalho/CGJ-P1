@@ -21,3 +21,8 @@ cd build
 cmake ..
 make run
 ```
+
+## Notes
+
+The zoom is clamped at the origin when zooming in.
+The zoom is also only controlled by up and down scroll events.
