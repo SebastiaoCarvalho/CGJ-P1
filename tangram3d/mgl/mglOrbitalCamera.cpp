@@ -2,7 +2,6 @@
 
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <iostream>
 
 namespace mgl {
 
@@ -45,18 +44,10 @@ namespace mgl {
         zoomLeft += yoffset * 0.5;
     }
 
-void printMatrix(glm::mat4 matrix) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                printf("%f ", matrix[i][j]);
-            }
-            printf("\n");
-        }
-        printf("\n");
-    }
-
     void OrbitalCamera::applyZoomAndRotation(double deltaTime) {
         double ammount = deltaTime * 10;
+        
+        // Use zoom left to smooth zoom animation
         double zoomAmmount = zoomLeft * 0.2;
         zoomLeft -= zoomAmmount;
 
