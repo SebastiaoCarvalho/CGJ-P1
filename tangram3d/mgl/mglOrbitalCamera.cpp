@@ -19,6 +19,7 @@ namespace mgl {
             this->near = near;
             this->far = far;
             this->fovy = fovy;
+            this->initialRatio = ratio;
             this->ratio = ratio;
             this->isOrthographic = false;
             this->zoomValue = glm::length(eye - center);
@@ -97,7 +98,7 @@ namespace mgl {
 
     void OrbitalCamera::updateProjectionMatrix() {
         if (isOrthographic) {
-            Camera::updateProjectionMatrix(glm::ortho(left * ratio, right * ratio, bottom * ratio , top * ratio, near, far));
+            Camera::updateProjectionMatrix(glm::ortho(left * ratio, right * ratio, bottom * initialRatio, top * initialRatio, near, far));
         } else {
             Camera::updateProjectionMatrix(glm::perspective(fovy, ratio, near, far));
         }

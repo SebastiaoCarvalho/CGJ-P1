@@ -20,6 +20,7 @@ class OrbitalCamera : public Camera {
         float far;
         float fovy;
         float ratio;
+        float initialRatio;
         bool isOrthographic = false;
         float zoomValue;
         float zoomLeft;
