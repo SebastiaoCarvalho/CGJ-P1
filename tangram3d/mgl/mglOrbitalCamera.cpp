@@ -48,7 +48,7 @@ namespace mgl {
         double ammount = deltaTime * 10;
         
         // Use zoom left to smooth zoom animation
-        double zoomAmmount = zoomLeft * 0.2;
+        double zoomAmmount = zoomLeft * 0.05;
         zoomLeft -= zoomAmmount;
 
         glm::vec3 view = glm::normalize(center - eye);

@@ -149,7 +149,7 @@ const float smallSizeHorizontalOffset = (pieceSize / 2) * scaleSize;
 const float mediumSizeHorizontalOffset = smallSizeHorizontalOffset * glm::sqrt(1.0f/2.0f);
 const float downVerticalOffset = smallSizeHorizontalOffset * glm::sqrt(2);
 
-const glm::quat axisRotation = glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+const glm::quat axisRotation = glm::angleAxis(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 TangramPiece * MyApp::createSmallTriangle(TangramPiece * root) {
   // Model Matrix
