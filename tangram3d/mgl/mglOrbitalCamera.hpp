@@ -47,7 +47,6 @@ class OrbitalCamera : public Camera {
         void updateProjectionMatrix();
         void rotate(double yaw, double pitch);
         void zoom(double yoffset);
-        //void applyZoom(double deltaTime);
         void applyZoomAndRotation(double deltaTime);
         void applyRotate(double deltaTime);
         void switchProjection();
